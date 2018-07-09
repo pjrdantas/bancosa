@@ -3,15 +3,15 @@ package br.com.meuBanco.dao;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.meuBanco.dao.impl.ItbAgenciaDAO;
 import br.com.meuBanco.entity.TbAgencia;
-import br.com.meuBanco.entity.TbAgenciaRowMapper;
+import br.com.meuBanco.entity.dto.TbAgenciaDTO;
 
 
 
@@ -24,113 +24,143 @@ public class TbAgenciaDAO implements ItbAgenciaDAO {
 	
 	
 	@Autowired
-    private JdbcTemplate jdbcTemplate;
+    private NamedParameterJdbcTemplate jdbcTemplate;
 	
 	
 	@Override
 	public void addTbAgencia(TbAgencia tbAgencia) {
 		
-		//Add tbAgencia
-		String sql = "INSERT INTO "
-				+ "tb_agencia ("
-				+ "id_agencia, "
-				+ "tb_agencia_codigo, "
-				+ "tb_agencia_digito, "
-				+ "tb_banco_id_banco) "
-				+ "values (?, ?, ?, ?)";
-		jdbcTemplate.update(sql, 
-				tbAgencia.getIdAgencia(), 
-				tbAgencia.getTbAgenciaCodigo(), 
-				tbAgencia.getTbAgenciaDigito(), 
-				tbAgencia.getTbBanco());
+		StringBuilder sql = new StringBuilder();
 		
-		//Fetch tbAgencia id
-		sql = "SELECT "
-				+ "id_agencia "
-				+ "FROM tb_agencia "
-				+ "WHERE "
-				+ "tb_agencia_codigo = ? and "
-				+ "tb_agencia_digito=? and "
-				+ "tb_banco_id_banco=?";
-		int idAgencia = jdbcTemplate.queryForObject(sql, Integer.class, 
-				tbAgencia.getTbAgenciaCodigo(), 
-				tbAgencia.getTbAgenciaDigito(), 
-				tbAgencia.getTbBanco());
+		sql.append(	"  INSERT INTO ");
+		sql.append( "  tb_agencia (");
+		sql.append( "  id_agencia, ");
+		sql.append( "  tb_agencia_codigo, ");
+		sql.append( "  tb_agencia_digito, ");
+		sql.append( "  tb_banco_id_banco) ");
+		sql.append( "  values (:idAgencia, :tbAgenciaCodigo, :tbAgenciaDigito, :tbBanco)");
 		
-		//Set tbAgencia id 
-		tbAgencia.setIdAgencia(idAgencia);
+		SqlParameterSource params = new MapSqlParameterSource()
+				.addValue("idAgencia", tbAgencia.getIdAgencia())
+				.addValue("tbAgenciaCodigo", tbAgencia.getTbAgenciaCodigo())
+				.addValue("tbAgenciaDigito", tbAgencia.getTbAgenciaDigito())
+				.addValue("tbBanco", tbAgencia.getTbBanco().getIdBanco());
+		
+		jdbcTemplate.update(sql.toString(), params);
+								
 	}
-
 	
-		
+	
+
 	@Override
 	public void updateTbAgencia(TbAgencia tbAgencia) {
 		
-		String sql = "UPDATE tb_agencia "
-				+ "SET  "
-				+ "tb_agencia_codigo=?, "
-				+ "tb_agencia_digito=?, "
-				+ "tb_banco_id_banco=? "
-				+ "WHERE id_agencia=?";
-		jdbcTemplate.update(sql, 
-				tbAgencia.getTbAgenciaCodigo(), 
-				tbAgencia.getTbAgenciaDigito(), 
-				tbAgencia.getTbBanco(), 
-				tbAgencia.getIdAgencia());
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" UPDATE tb_agencia ");
+		sql.append(" SET  ");
+		sql.append(" tb_agencia_codigo = :tbAgenciaCodigo, ");
+		sql.append(" tb_agencia_digito = UPPER(:tbAgenciaDigito), ");
+		sql.append(" tb_banco_id_banco = :tbBanco ");
+		sql.append(" WHERE id_agencia = :idAgencia");
+		
+		SqlParameterSource params = new MapSqlParameterSource()
+				.addValue("tbAgenciaCodigo", tbAgencia.getTbAgenciaCodigo())
+				.addValue("tbAgenciaDigito", tbAgencia.getTbAgenciaCodigo())
+				.addValue("tbBanco", tbAgencia.getTbBanco().getIdBanco())
+				.addValue("idAgencia", tbAgencia.getIdAgencia());
+		
+		jdbcTemplate.update(sql.toString(), params);
+	}
+
+	
+	
+	final static StringBuilder sqlSelectPrincipal = new StringBuilder().append(
+			"  SELECT DISTINCT ")
+			.append("  c.id_agencia")
+			.append("  ,c.tb_agencia_codigo")
+			.append("  ,c.tb_agencia_digito")
+			.append("  ,i.tb_banco_codigo")
+			.append("  ,i.tb_banco_nome")
+			.append("  FROM tb_agencia c INNER JOIN tb_banco i");
+			
+		
+	private List<TbAgenciaDTO> devolveListaObjetos(StringBuilder sql, SqlParameterSource params) {
+		return jdbcTemplate.query(sql.toString(), params, (rs, i) -> {
+		
+			TbAgenciaDTO tbAgenciaDTO = new TbAgenciaDTO();
+
+			tbAgenciaDTO.setIdAgencia(rs.getInt("c.id_agencia"));
+			tbAgenciaDTO.setAgenciaCodigo(rs.getInt("c.tb_agencia_codigo"));
+			tbAgenciaDTO.setAgenciaDigito(rs.getString("c.tb_agencia_digito"));
+			tbAgenciaDTO.setBancoCodigo(rs.getInt("i.tb_banco_codigo"));
+			tbAgenciaDTO.setBancoNome(rs.getString("i.tb_banco_nome"));
+	
+	return tbAgenciaDTO;
+	 
+		});
+	}
+	
+	
+	@Override
+	public List<TbAgenciaDTO> getAllTbAgencias() {
+		StringBuilder sql = new StringBuilder(sqlSelectPrincipal)		
+		.append("  ON i.id_banco = c.tb_banco_id_banco order by c.tb_agencia_codigo ");
+		
+		return devolveListaObjetos(sql, null);
 	}
 	
 
+	
+	
+	private TbAgenciaDTO devolveObjeto(StringBuilder sql, SqlParameterSource params) {
+		return jdbcTemplate.queryForObject(sql.toString(), params, (rs, i) -> {
+			
+			
+			TbAgenciaDTO tbAgenciaDTO = new TbAgenciaDTO();
+
+			tbAgenciaDTO.setIdAgencia(rs.getInt("c.id_agencia"));
+			tbAgenciaDTO.setAgenciaCodigo(rs.getInt("c.tb_agencia_codigo"));
+			tbAgenciaDTO.setAgenciaDigito(rs.getString("c.tb_agencia_digito"));
+			tbAgenciaDTO.setBancoCodigo(rs.getInt("i.tb_banco_codigo"));
+			tbAgenciaDTO.setBancoNome(rs.getString("i.tb_banco_nome"));
+			
+			
+			return tbAgenciaDTO;
+
+		});
+	}
 		
-	@Override
-	public List<TbAgencia> getAllTbAgencias() {
-		String sql = "SELECT "
-				+ "id_agencia, "
-				+ "tb_agencia_codigo, "
-				+ "tb_agencia_digito, "
-				+ "tb_banco_id_banco "
-				+ "FROM tb_agencia "
-				+ "order by tb_agencia_codigo";
-        //RowMapper<TbAgencia> rowMapper = new BeanPropertyRowMapper<TbAgencia>(TbAgencia.class);
-		RowMapper<TbAgencia> rowMapper = new TbAgenciaRowMapper();
-		return this.jdbcTemplate.query(sql, rowMapper);
-	}	
-	
-	
-	
-	
 	 
-	
-	
-	@Override
-	public TbAgencia getTbAgenciaById(int id) {
-		String sql = "SELECT "
-				+ "id_agencia, "
-				+ "tb_agencia_codigo, "
-				+ "tb_agencia_digito, "
-				+ "tb_banco_id_banco "
-				+ "FROM tb_agencia "
-				+ "WHERE id_agencia = ?";
-		RowMapper<TbAgencia> rowMapper = new BeanPropertyRowMapper<TbAgencia>(TbAgencia.class);
-		TbAgencia tbAgencia = jdbcTemplate.queryForObject(sql, rowMapper, id);
-		tbAgencia.setIdAgencia(id);
-		System.out.println("-------------------------------------------------------------------"+tbAgencia.getIdAgencia());
-		return tbAgencia;
+	public TbAgenciaDTO getTbAgenciaById(int id) {
+		
+		StringBuilder sql = new StringBuilder(sqlSelectPrincipal);		
+		sql.append("  ON i.id_banco = c.tb_banco_id_banco  ")
+		.append(" WHERE c.id_agencia = :idAgencia ");
+		SqlParameterSource params = new MapSqlParameterSource().addValue("idAgencia", id);
+		
+		return devolveObjeto(sql, params);
+		
 	}
 	
-	
-		
-	
 	 
-	
-	
+
+
+
 	@Override
 	public void deleteTbAgencia(int id) {
-		String sql = "DELETE FROM tb_agencia WHERE id_agencia=?";
-		jdbcTemplate.update(sql, id);
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" DELETE FROM ");
+	    sql.append(" tb_agencia "); 
+	    sql.append(" WHERE id_agencia = :idAgencia");	        
+
+	     SqlParameterSource params = new MapSqlParameterSource().addValue("idAgencia", id);
+
+	     jdbcTemplate.update(sql.toString(), params);
 	}
-	
-	
-	 
-	
+
+
 	
 }

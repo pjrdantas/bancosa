@@ -116,4 +116,54 @@ public class TbAgencia {
 		return tbConta;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + idAgencia;
+		result = prime * result + tbAgenciaCodigo;
+		result = prime * result + ((tbAgenciaDigito == null) ? 0 : tbAgenciaDigito.hashCode());
+		result = prime * result + ((tbBanco == null) ? 0 : tbBanco.hashCode());
+		result = prime * result + ((tbClientes == null) ? 0 : tbClientes.hashCode());
+		result = prime * result + ((tbContas == null) ? 0 : tbContas.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TbAgencia other = (TbAgencia) obj;
+		if (idAgencia != other.idAgencia)
+			return false;
+		if (tbAgenciaCodigo != other.tbAgenciaCodigo)
+			return false;
+		if (tbAgenciaDigito == null) {
+			if (other.tbAgenciaDigito != null)
+				return false;
+		} else if (!tbAgenciaDigito.equals(other.tbAgenciaDigito))
+			return false;
+		if (tbBanco == null) {
+			if (other.tbBanco != null)
+				return false;
+		} else if (!tbBanco.equals(other.tbBanco))
+			return false;
+		if (tbClientes == null) {
+			if (other.tbClientes != null)
+				return false;
+		} else if (!tbClientes.equals(other.tbClientes))
+			return false;
+		if (tbContas == null) {
+			if (other.tbContas != null)
+				return false;
+		} else if (!tbContas.equals(other.tbContas))
+			return false;
+		return true;
+	}
+
+	
 }

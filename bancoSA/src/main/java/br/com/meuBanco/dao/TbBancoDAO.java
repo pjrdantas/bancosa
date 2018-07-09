@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.meuBanco.dao.impl.ItbBancoDAO;
 import br.com.meuBanco.entity.TbBanco;
-import br.com.meuBanco.entity.TbBancoRowMapper;
+import br.com.meuBanco.entity.rowMapper.TbBancoRowMapper;
 
 
 

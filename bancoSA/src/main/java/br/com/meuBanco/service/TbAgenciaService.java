@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.meuBanco.dao.impl.ItbAgenciaDAO;
 import br.com.meuBanco.entity.TbAgencia;
+import br.com.meuBanco.entity.dto.TbAgenciaDTO;
 import br.com.meuBanco.service.impl.ITbAgenciaService;
 
 
@@ -22,31 +23,31 @@ public class TbAgenciaService  implements ITbAgenciaService {
 	@Autowired
 	private ItbAgenciaDAO tbAgenciaDAO;
 
-	
+
 	@Override
 	public void addTbAgencia(TbAgencia tbAgencia) {
 		tbAgenciaDAO.addTbAgencia(tbAgencia);
 		
 	}
 	
-	
+
 	 
 	@Override
 	public void updateTbAgencia(TbAgencia tbAgencia) {
 		tbAgenciaDAO.updateTbAgencia(tbAgencia);
 	}
 	
-	 
+
 	@Override
-	public List<TbAgencia> consultar(){
+	public List<TbAgenciaDTO> consultar(){
 		return tbAgenciaDAO.getAllTbAgencias();
 	}
 
 	
-		
+	
 	@Override
-	public TbAgencia getTbAgenciaById(int id) {
-		TbAgencia obj = tbAgenciaDAO.getTbAgenciaById(id);
+	public TbAgenciaDTO getTbAgenciaById(int id) {
+		TbAgenciaDTO obj = tbAgenciaDAO.getTbAgenciaById(id);
 		return obj;
 	}	
 	
@@ -57,6 +58,6 @@ public class TbAgenciaService  implements ITbAgenciaService {
 		tbAgenciaDAO.deleteTbAgencia(id);
 	}
 
- 
+  
 
 }

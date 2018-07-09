@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.meuBanco.entity.TbAgencia;
+import br.com.meuBanco.entity.dto.TbAgenciaDTO;
 import br.com.meuBanco.response.ResponseModel;
 import br.com.meuBanco.service.impl.ITbAgenciaService;
-
 
 
 
@@ -31,13 +31,12 @@ public class AgenciaController {
 	@Autowired
 	private ITbAgenciaService agenciaService;
 
-	
+
 	@RequestMapping(value="/agencia", method = RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody ResponseModel salvar(@RequestBody TbAgencia tbAgencia){
       
 	System.out.println("-------------------------------------------------------------------"+tbAgencia.getIdAgencia()+" "+tbAgencia.getTbAgenciaCodigo()+" "+tbAgencia.getTbAgenciaDigito()+" "+tbAgencia.getTbBanco().getIdBanco());
-		
-		
+	
 		try {
 			 
 			this.agenciaService.addTbAgencia(tbAgencia);
@@ -46,7 +45,7 @@ public class AgenciaController {
  
 		}catch(Exception e) {
  
-			return new ResponseModel(0,e.getMessage()+"deu merda");			
+			return new ResponseModel(0,e.getMessage());			
 		}
 		
 	}
@@ -56,7 +55,7 @@ public class AgenciaController {
 	
 	
 	@RequestMapping(value="/agencia", method = RequestMethod.PUT, consumes=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody ResponseModel atualizar(@RequestBody TbAgencia tbAgencia){
+	public @ResponseBody ResponseModel atualizar(@RequestBody TbAgencia tbAgencia)  throws Exception, Throwable {
 		System.out.println("-------------------------------------------------------------------"+tbAgencia.getIdAgencia()+" "+tbAgencia.getTbAgenciaCodigo()+" "+tbAgencia.getTbAgenciaDigito());
 		try {
 			 
@@ -72,10 +71,10 @@ public class AgenciaController {
 	}
 	
 
-	 
+	
 	
 	@RequestMapping(value="/agencia", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody List<TbAgencia> consultar(){
+	public @ResponseBody List<TbAgenciaDTO> consultar(){
 		
 		
 		return this.agenciaService.consultar();
@@ -83,18 +82,18 @@ public class AgenciaController {
 			
 	}
 	
-	
+
 	
 	@RequestMapping(value="/agencia/{idAgencia}", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody TbAgencia buscar(@PathVariable("idAgencia") String idAgencia){
-		System.out.println("-------------------------------------------------------------------"+idAgencia);
-		int id = Integer.parseInt(idAgencia);
+	public @ResponseBody TbAgenciaDTO buscar(@PathVariable("idAgencia") String idAgencia){
 		
+		int id = Integer.parseInt(idAgencia);
+		System.out.println("-------------------------------------------------------------------"+id);
 		return this.agenciaService.getTbAgenciaById(id);
 		
 	}
 	
-	
+	 
 	 
 	
 	@RequestMapping(value="/agencia/{idAgencia}", method = RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -102,7 +101,6 @@ public class AgenciaController {
 		
 		System.out.println("-------------------------------------------------------------------"+idAgencia);
 		int id = Integer.parseInt(idAgencia);
-		//long id = Long.parseDouble(idAgencia);
 		 
 		try {
  
@@ -115,5 +113,5 @@ public class AgenciaController {
 		}
 
 	}	
-		
+		 
 } 
