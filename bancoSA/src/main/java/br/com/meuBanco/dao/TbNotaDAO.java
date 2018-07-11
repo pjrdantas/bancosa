@@ -3,15 +3,15 @@ package br.com.meuBanco.dao;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.meuBanco.dao.impl.ItbNotaDAO;
 import br.com.meuBanco.entity.TbNota;
-import br.com.meuBanco.entity.rowMapper.TbNotaRowMapper;
+import br.com.meuBanco.entity.dto.TbNotaDTO;
 
 
 
@@ -22,22 +22,33 @@ public class TbNotaDAO implements ItbNotaDAO {
 	
 	
 	@Autowired
-    private JdbcTemplate jdbcTemplate;
+    private NamedParameterJdbcTemplate jdbcTemplate;
 	
 	
 	@Override
 	public void addTbNota(TbNota tbNota) {
 		
-		//Add tbNota
-		String sql = "INSERT INTO tb_notas (id_notas, tb_notas_valor) values (?, ?)";
-		jdbcTemplate.update(sql, tbNota.getIdNotas(), tbNota.getTbNotasValor());		
+				
+		StringBuilder sql = new StringBuilder();
 		
-		//Fetch tbNota id
-		sql = "SELECT id_notas FROM tb_notas WHERE tb_notas_valor=?";
-		int idNota = jdbcTemplate.queryForObject(sql, Integer.class,  tbNota.getTbNotasValor()); 
+		sql.append(	"  INSERT INTO ");
+		sql.append( "  tb_notas (");
+		sql.append( "  id_notas, ");
+		sql.append( "  tb_notas_valor) ");
+		sql.append( "  values (:idNotas, :tbNotasValor)");
 		
-		//Set tbNota id
-		tbNota.setIdNotas(idNota);
+		SqlParameterSource params = new MapSqlParameterSource()
+				.addValue("idNotas", tbNota.getIdNotas())
+				.addValue("tbNotasValor", tbNota.getTbNotasValor());
+		
+		try{
+	    	 jdbcTemplate.update(sql.toString(), params);
+	         
+	     }catch (Exception e){
+	    	 System.out.println("-----------------ERRO NO INSERT DA NOTA-------------------------------" + e.toString());
+	        
+	     }	
+
 	}
 
 	
@@ -45,38 +56,112 @@ public class TbNotaDAO implements ItbNotaDAO {
 	@Override
 	public void updateTbNota(TbNota tbNota) {
 		
-		String sql = "UPDATE tb_notas SET  tb_notas_valor=? WHERE id_notas=?";
-		jdbcTemplate.update(sql, tbNota.getTbNotasValor(), tbNota.getIdNotas());
+		
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" UPDATE tb_notas ");
+		sql.append(" SET  ");
+		sql.append(" tb_notas_valor = :tbNotasValor ");
+		sql.append(" WHERE id_notas = :idNotas");
+		
+		SqlParameterSource params = new MapSqlParameterSource()				
+				.addValue("tbNotasValor", tbNota.getTbNotasValor())
+				.addValue("idNotas", tbNota.getIdNotas());
+		
+		try{
+	    	 jdbcTemplate.update(sql.toString(), params);
+	         
+	     }catch (Exception e){
+	    	 System.out.println("-----------------ERRO NO UPDATE DA NOTA-------------------------------" + e.toString());
+	        
+	     }	
+
+		
 	}
 	
 
+	final static StringBuilder sqlSelectPrincipal = new StringBuilder()
+			.append("  SELECT ")
+			.append("  id_notas ")
+			.append("  ,tb_notas_valor")
+			.append("  FROM tb_notas ");
+					
+	private List<TbNotaDTO> devolveListaObjetos(StringBuilder sql, SqlParameterSource params) {
+		return jdbcTemplate.query(sql.toString(), params, (rs, i) -> {
 		
-	@Override
-	public List<TbNota> getAllTbNotas() {
-		
-		String sql = "SELECT id_notas, tb_notas_valor FROM tb_notas order by tb_notas_valor";
-		RowMapper<TbNota> rowMapper = new TbNotaRowMapper();
-		return this.jdbcTemplate.query(sql, rowMapper);
-	}	
+			TbNotaDTO tbNotaDTO = new TbNotaDTO();
+
+			tbNotaDTO.setIdNotas(rs.getInt("id_notas"));
+			tbNotaDTO.setNotasValor(rs.getInt("tb_notas_valor"));
 	
-	
-	@Override
-	public TbNota getTbNotaById(int id) {
-		
-		String sql = "SELECT tb_notas_valor FROM tb_notas WHERE id_notas = ?";
-		RowMapper<TbNota> rowMapper = new BeanPropertyRowMapper<TbNota>(TbNota.class);
-		TbNota tbNota = jdbcTemplate.queryForObject(sql, rowMapper, id);
-		tbNota.setIdNotas(id);
-		System.out.println("-------------------------------------------------------------------"+tbNota.getIdNotas());
-		return tbNota;
+	return tbNotaDTO;
+	 
+		});
 	}
+	
+	
+	@Override
+	public List<TbNotaDTO> getAllTbNotas() {
+		
+		StringBuilder sql = new StringBuilder(sqlSelectPrincipal)		
+		.append("  ORDER BY  tb_notas_valor ");
+		
+		return devolveListaObjetos(sql, null);
+	}
+	
+	
+	
+	private TbNotaDTO devolveObjeto(StringBuilder sql, SqlParameterSource params) {
+		return jdbcTemplate.queryForObject(sql.toString(), params, (rs, i) -> {
+						
+			TbNotaDTO tbNotaDTO = new TbNotaDTO();
+
+			tbNotaDTO.setIdNotas(rs.getInt("id_notas"));
+			tbNotaDTO.setNotasValor(rs.getInt("tb_notas_valor"));
+									
+			return tbNotaDTO;
+
+		});
+	}
+		
+	@Override 
+	public TbNotaDTO getTbNotaById(int id) {
+		
+		StringBuilder sql = new StringBuilder(sqlSelectPrincipal);		
+		sql.append("  WHERE id_notas = :idNotas ");
+		
+		SqlParameterSource params = new MapSqlParameterSource().addValue("idNotas", id);
+		
+		return devolveObjeto(sql, params);
+		
+	}
+
+	
 	
 		
 	@Override
 	public void deleteTbNota(int id) {
+				
+		StringBuilder sql = new StringBuilder();
 		
-		String sql = "DELETE FROM tb_notas WHERE id_notas=?";
-		jdbcTemplate.update(sql, id);
+		sql.append(" DELETE FROM ");
+	    sql.append(" tb_notas "); 
+	    sql.append(" WHERE id_notas = :idNotas");	        
+
+	     SqlParameterSource params = new MapSqlParameterSource().addValue("idNotas", id);
+
+		try{
+		    jdbcTemplate.update(sql.toString(), params);
+		         
+		}catch (Exception e){
+		    System.out.println("-----------------ERRO NO DELETE DA NOTA-------------------------------" + e.toString());
+		        
+		}	
+
 	}
-		
+
+
+
+	
 }

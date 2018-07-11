@@ -7,44 +7,47 @@ import org.springframework.stereotype.Service;
 
 import br.com.meuBanco.dao.impl.ItbBancoDAO;
 import br.com.meuBanco.entity.TbBanco;
+import br.com.meuBanco.entity.dto.TbBancoDTO;
 import br.com.meuBanco.service.impl.ITbBancoService;
 
 
 
 
 
+
+
 @Service
-public class TbBancoService  implements ITbBancoService {
+public class TbbancoService  implements ITbBancoService {
 	
 	
 	@Autowired
 	private ItbBancoDAO tbBancoDAO;
 
-	
+
 	@Override
 	public void addTbBanco(TbBanco tbBanco) {
 		tbBancoDAO.addTbBanco(tbBanco);
 		
 	}
 	
-	
+
 	 
 	@Override
 	public void updateTbBanco(TbBanco tbBanco) {
 		tbBancoDAO.updateTbBanco(tbBanco);
 	}
 	
-	 
+
 	@Override
-	public List<TbBanco> consultar(){
+	public List<TbBancoDTO> consultar(){
 		return tbBancoDAO.getAllTbBancos();
 	}
 
 	
-		
+	
 	@Override
-	public TbBanco getTbBancoById(int id) {
-		TbBanco obj = tbBancoDAO.getTbBancoById(id);
+	public TbBancoDTO getTbBancoById(int id) {
+		TbBancoDTO obj = tbBancoDAO.getTbBancoById(id);
 		return obj;
 	}	
 	
@@ -55,6 +58,6 @@ public class TbBancoService  implements ITbBancoService {
 		tbBancoDAO.deleteTbBanco(id);
 	}
 
- 
+  
 
 }

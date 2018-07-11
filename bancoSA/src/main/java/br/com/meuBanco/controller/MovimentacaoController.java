@@ -64,6 +64,8 @@ public class MovimentacaoController {
 	@RequestMapping(value="/movimentacao", method = RequestMethod.PUT, consumes=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody ResponseModel atualizar(@RequestBody TbMovimentacao tbMovimentacao)  throws Exception, Throwable {
 
+		System.out.println("-------------------------------------------------------------------"+tbMovimentacao.getIdMovimentacao()+" ");
+
 		try {			 
 			this.movimentacaoService.updateTbMovimentacao(tbMovimentacao);		
 			return new ResponseModel(1,"Registro atualizado com sucesso!"); 

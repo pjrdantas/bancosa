@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.meuBanco.entity.TbBanco;
+import br.com.meuBanco.entity.dto.TbBancoDTO;
 import br.com.meuBanco.response.ResponseModel;
 import br.com.meuBanco.service.impl.ITbBancoService;
 
@@ -74,7 +75,7 @@ public class BancoController {
 	 
 	
 	@RequestMapping(value="/banco", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody List<TbBanco> consultar(){
+	public @ResponseBody List<TbBancoDTO> consultar(){
 		
 		
 		return this.bancoService.consultar();
@@ -85,7 +86,7 @@ public class BancoController {
 	
 	
 	@RequestMapping(value="/banco/{idBanco}", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody TbBanco buscar(@PathVariable("idBanco") String idBanco){
+	public @ResponseBody TbBancoDTO buscar(@PathVariable("idBanco") String idBanco){
 		System.out.println("-------------------------------------------------------------------"+idBanco);
 		int id = Integer.parseInt(idBanco);
 		

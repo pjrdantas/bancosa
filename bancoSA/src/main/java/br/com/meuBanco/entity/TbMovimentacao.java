@@ -1,8 +1,7 @@
 package br.com.meuBanco.entity;
 
-
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,12 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
-import br.com.meuBanco.utils.LocalDateTimeDeserializer;
-import br.com.meuBanco.utils.LocalDateTimeSerializer;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 
 /**
@@ -31,13 +26,12 @@ public class TbMovimentacao {
 	@Column(name="id_movimentacao", unique=true, nullable=false)
 	private int idMovimentacao;
 
-	@Column(name="tb_movimenta_credito", nullable=false, precision=10, scale=2)
-	private BigDecimal tbMovimentaCredito;
-	
+	@Column(name="tb_movimentacao_credito", nullable=false, precision=10, scale=2)
+	private BigDecimal tbMovimentacaoCredito;
+
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="tb_movimentacao_data", nullable=false)
-	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-	private LocalDate tbMovimentacaoData;
+	private Date tbMovimentacaoData;
 
 	@Column(name="tb_movimentacao_debito", nullable=false, precision=10, scale=2)
 	private BigDecimal tbMovimentacaoDebito;
@@ -58,19 +52,19 @@ public class TbMovimentacao {
 		this.idMovimentacao = idMovimentacao;
 	}
 
-	public BigDecimal getTbMovimentaCredito() {
-		return this.tbMovimentaCredito;
+	public BigDecimal getTbMovimentacaoCredito() {
+		return this.tbMovimentacaoCredito;
 	}
 
-	public void setTbMovimentaCredito(BigDecimal tbMovimentaCredito) {
-		this.tbMovimentaCredito = tbMovimentaCredito;
+	public void setTbMovimentacaoCredito(BigDecimal tbMovimentaCredito) {
+		this.tbMovimentacaoCredito = tbMovimentaCredito;
 	}
 
-	public LocalDate getTbMovimentacaoData() {
-		return tbMovimentacaoData;
+	public Date getTbMovimentacaoData() {
+		return this.tbMovimentacaoData;
 	}
 
-	public void setTbMovimentacaoData(LocalDate tbMovimentacaoData) {
+	public void setTbMovimentacaoData(Date tbMovimentacaoData) {
 		this.tbMovimentacaoData = tbMovimentacaoData;
 	}
 

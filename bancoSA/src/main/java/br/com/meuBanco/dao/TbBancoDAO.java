@@ -3,15 +3,15 @@ package br.com.meuBanco.dao;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.meuBanco.dao.impl.ItbBancoDAO;
 import br.com.meuBanco.entity.TbBanco;
-import br.com.meuBanco.entity.rowMapper.TbBancoRowMapper;
+import br.com.meuBanco.entity.dto.TbBancoDTO;
 
 
 
@@ -22,104 +22,150 @@ public class TbBancoDAO implements ItbBancoDAO {
 	
 	
 	@Autowired
-    private JdbcTemplate jdbcTemplate;
+    private NamedParameterJdbcTemplate jdbcTemplate;
 	
 	
 	@Override
 	public void addTbBanco(TbBanco tbBanco) {
+						
+		StringBuilder sql = new StringBuilder();
 		
-		//Add tbBanco
-		String sql = "INSERT INTO "
-				+ "tb_banco ("
-				+ "id_banco, "
-				+ "tb_banco_codigo, "
-				+ "tb_banco_nome) "
-				+ "values (?, ?, ?)";
-		jdbcTemplate.update(sql, 
-				tbBanco.getIdBanco(), 
-				tbBanco.getTbBancoCodigo(), 
-				tbBanco.getTbBancoNome());
+		sql.append(	"  INSERT INTO ");
+		sql.append( "  tb_banco (");
+		sql.append( "  id_banco, ");
+		sql.append( "  tb_banco_codigo, ");
+		sql.append( "  tb_banco_nome) ");
+		sql.append( "  values (:idBanco, :tbBancoCodigo, :tbBancoNome)");
 		
-		//Fetch tbBanco id
-		sql = "SELECT "
-				+ "id_banco "
-				+ "FROM tb_banco "
-				+ "WHERE "
-				+ "tb_banco_codigo = ? and "
-				+ "tb_banco_nome=?";
-		int idBanco = jdbcTemplate.queryForObject(sql, Integer.class, 
-				tbBanco.getTbBancoCodigo(), 
-				tbBanco.getTbBancoNome());
+		SqlParameterSource params = new MapSqlParameterSource()
+				.addValue("idBanco", tbBanco.getIdBanco())
+				.addValue("tbBancoCodigo", tbBanco.getTbBancoCodigo())
+				.addValue("tbBancoNome", tbBanco.getTbBancoNome());
 		
-		//Set tbBanco id 
-		tbBanco.setIdBanco(idBanco);
+		try{
+	    	 jdbcTemplate.update(sql.toString(), params);
+	         
+	     }catch (Exception e){
+	    	 System.out.println("-----------------ERRO NO INSERT DO BANCO-------------------------------" + e.toString());
+	        
+	     }	
+
 	}
 
 	
 		
 	@Override
 	public void updateTbBanco(TbBanco tbBanco) {
+				
+		StringBuilder sql = new StringBuilder();
 		
-		String sql = "UPDATE tb_banco "
-				+ "SET  "
-				+ "tb_banco_codigo=?, "
-				+ "tb_banco_nome=? "
-				+ "WHERE id_banco=?";
-		jdbcTemplate.update(sql, 
-				tbBanco.getTbBancoCodigo(), 
-				tbBanco.getTbBancoNome(), 
-				tbBanco.getIdBanco());
+		sql.append(" UPDATE tb_banco ");
+		sql.append(" SET  ");
+		sql.append(" tb_banco_codigo = :tbBancoCodigo, ");
+		sql.append(" tb_banco_nome = :tbBancoNome ");
+		sql.append(" WHERE id_banco = :idBanco");
+		
+		SqlParameterSource params = new MapSqlParameterSource()				
+				.addValue("tbBancoCodigo", tbBanco.getTbBancoCodigo())
+				.addValue("tbBancoNome", tbBanco.getTbBancoNome())
+				.addValue("idBanco", tbBanco.getIdBanco());
+		
+		try{
+	    	 jdbcTemplate.update(sql.toString(), params);
+	         
+	     }catch (Exception e){
+	    	 System.out.println("-----------------ERRO NO UPDATE DO BANCO-------------------------------" + e.toString());
+	        
+	     }	
+
+		
 	}
 	
 
+	final static StringBuilder sqlSelectPrincipal = new StringBuilder()
+			.append("  SELECT ")
+			.append("  id_banco ")
+			.append("  ,tb_banco_codigo")
+			.append("  ,tb_banco_nome")
+			.append("  FROM tb_banco ");
+					
+	private List<TbBancoDTO> devolveListaObjetos(StringBuilder sql, SqlParameterSource params) {
+		return jdbcTemplate.query(sql.toString(), params, (rs, i) -> {
 		
-	@Override
-	public List<TbBanco> getAllTbBancos() {
-		String sql = "SELECT "
-				+ "id_banco, "
-				+ "tb_banco_codigo, "
-				+ "tb_banco_nome "
-				+ "FROM tb_banco "
-				+ "order by tb_banco_codigo";
-        //RowMapper<TbBanco> rowMapper = new BeanPropertyRowMapper<TbBanco>(TbBanco.class);
-		RowMapper<TbBanco> rowMapper = new TbBancoRowMapper();
-		return this.jdbcTemplate.query(sql, rowMapper);
-	}	
+			TbBancoDTO tbBancoDTO = new TbBancoDTO();
+
+			tbBancoDTO.setIdBanco(rs.getInt("id_banco"));
+			tbBancoDTO.setBancoCodigo(rs.getInt("tb_banco_codigo"));
+			tbBancoDTO.setBancoNome(rs.getString("tb_banco_nome"));
 	
-	
-	
-	
+	return tbBancoDTO;
 	 
-	
-	
-	@Override
-	public TbBanco getTbBancoById(int id) {
-		String sql = "SELECT "
-				+ "tb_banco_codigo, "
-				+ "tb_banco_nome "
-				+ "FROM tb_banco "
-				+ "WHERE id_banco = ?";
-		RowMapper<TbBanco> rowMapper = new BeanPropertyRowMapper<TbBanco>(TbBanco.class);
-		TbBanco tbBanco = jdbcTemplate.queryForObject(sql, rowMapper, id);
-		tbBanco.setIdBanco(id);
-		System.out.println("-------------------------------------------------------------------"+tbBanco.getIdBanco());
-		return tbBanco;
+		});
 	}
 	
 	
+	@Override
+	public List<TbBancoDTO> getAllTbBancos() {
 		
+		StringBuilder sql = new StringBuilder(sqlSelectPrincipal)		
+		.append("  ORDER BY  tb_banco_codigo ");
+		
+		return devolveListaObjetos(sql, null);
+	}
 	
-	 
 	
 	
+	private TbBancoDTO devolveObjeto(StringBuilder sql, SqlParameterSource params) {
+		return jdbcTemplate.queryForObject(sql.toString(), params, (rs, i) -> {
+						
+			TbBancoDTO tbBancoDTO = new TbBancoDTO();
+
+			tbBancoDTO.setIdBanco(rs.getInt("id_banco"));
+			tbBancoDTO.setBancoCodigo(rs.getInt("tb_banco_codigo"));
+			tbBancoDTO.setBancoNome(rs.getString("tb_banco_nome"));
+									
+			return tbBancoDTO;
+
+		});
+	}
+		
+	@Override 
+	public TbBancoDTO getTbBancoById(int id) {
+		
+		StringBuilder sql = new StringBuilder(sqlSelectPrincipal);		
+		sql.append("  WHERE id_banco = :idBanco ");
+		
+		SqlParameterSource params = new MapSqlParameterSource().addValue("idBanco", id);
+		
+		return devolveObjeto(sql, params);
+		
+	}
+
+	
+	
+		
 	@Override
 	public void deleteTbBanco(int id) {
-		String sql = "DELETE FROM tb_banco WHERE id_banco=?";
-		jdbcTemplate.update(sql, id);
+				
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" DELETE FROM ");
+	    sql.append(" tb_banco "); 
+	    sql.append(" WHERE id_banco = :idBanco");	        
+
+	     SqlParameterSource params = new MapSqlParameterSource().addValue("idBanco", id);
+
+		try{
+		    jdbcTemplate.update(sql.toString(), params);
+		         
+		}catch (Exception e){
+		    System.out.println("-----------------ERRO NO DELETE DA NOTA-------------------------------" + e.toString());
+		        
+		}	
+
 	}
-	
-	
-	 
-	
+
+
+
 	
 }
