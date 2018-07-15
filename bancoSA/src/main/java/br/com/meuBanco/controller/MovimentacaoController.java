@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.meuBanco.entity.TbMovimentacao;
 import br.com.meuBanco.entity.dto.TbMovimentacaoDTO;
 import br.com.meuBanco.response.ResponseModel;
 import br.com.meuBanco.service.impl.ITbMovimentacaoService;
@@ -34,16 +33,17 @@ public class MovimentacaoController {
 
 	/**
 	 * 
-	 * @param tbMovimentacao
+	 * @param tbMovimentacaoDTO
 	 * @return
+	 * @throws Exception
+	 * @throws Throwable
 	 */
 	@RequestMapping(value="/movimentacao", method = RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody ResponseModel salvar(@RequestBody TbMovimentacao tbMovimentacao){
+	public @ResponseBody ResponseModel salvar(@RequestBody TbMovimentacaoDTO tbMovimentacaoDTO)  throws Exception, Throwable {
       
-	System.out.println("-------------------------------------------------------------------"+tbMovimentacao.getIdMovimentacao()+" ");
 	
 		try {			 
-			this.movimentacaoService.addTbMovimentacao(tbMovimentacao); 
+			this.movimentacaoService.addTbMovimentacaoDTO(tbMovimentacaoDTO); 
 			return new ResponseModel(1,"Registro salvo com sucesso!"); 
 		}catch(Exception e) {
 			return new ResponseModel(0,e.getMessage());			
@@ -62,12 +62,15 @@ public class MovimentacaoController {
 	 * @throws Throwable
 	 */
 	@RequestMapping(value="/movimentacao", method = RequestMethod.PUT, consumes=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody ResponseModel atualizar(@RequestBody TbMovimentacao tbMovimentacao)  throws Exception, Throwable {
+	public @ResponseBody ResponseModel atualizar(@RequestBody TbMovimentacaoDTO tbMovimentacaoDTO)  throws Exception, Throwable {
 
-		System.out.println("-------------------------------------------------------------------"+tbMovimentacao.getIdMovimentacao()+" ");
-
+		System.out.println("-------------------------------------------------------------------"
+				+tbMovimentacaoDTO.getIdMovimentacao()+" "+tbMovimentacaoDTO.getMovimentacaoCredito()
+				+" "+tbMovimentacaoDTO.getMovimentacaoData()+" "+tbMovimentacaoDTO.getMovimentacaoDebito()
+				+" "+tbMovimentacaoDTO.getMovimentacaoIdConta());
+				
 		try {			 
-			this.movimentacaoService.updateTbMovimentacao(tbMovimentacao);		
+			this.movimentacaoService.updateTbMovimentacaoDTO(tbMovimentacaoDTO);		
 			return new ResponseModel(1,"Registro atualizado com sucesso!"); 
 		}catch(Exception e) { 
 			return new ResponseModel(0,e.getMessage());
@@ -80,9 +83,11 @@ public class MovimentacaoController {
 	/**
 	 * 
 	 * @return
+	 * @throws Exception
+	 * @throws Throwable
 	 */
 	@RequestMapping(value="/movimentacao", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody List<TbMovimentacaoDTO> consultar(){
+	public @ResponseBody List<TbMovimentacaoDTO> consultar()  throws Exception, Throwable {
 				
 		return this.movimentacaoService.consultar();			
 	}
@@ -92,9 +97,11 @@ public class MovimentacaoController {
 	 * 
 	 * @param idMovimentacao
 	 * @return
+	 * @throws Exception
+	 * @throws Throwable
 	 */
 	@RequestMapping(value="/movimentacao/{idMovimentacao}", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody TbMovimentacaoDTO buscar(@PathVariable("idMovimentacao") String idMovimentacao){
+	public @ResponseBody TbMovimentacaoDTO buscar(@PathVariable("idMovimentacao") String idMovimentacao)  throws Exception, Throwable {
 		
 		int id = Integer.parseInt(idMovimentacao);
 		return this.movimentacaoService.getTbMovimentacaoById(id);
@@ -107,9 +114,11 @@ public class MovimentacaoController {
 	 * 
 	 * @param idMovimentacao
 	 * @return
+	 * @throws Exception
+	 * @throws Throwable
 	 */
 	@RequestMapping(value="/movimentacao/{idMovimentacao}", method = RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody ResponseModel excluir(@PathVariable("idMovimentacao") String idMovimentacao){
+	public @ResponseBody ResponseModel excluir(@PathVariable("idMovimentacao") String idMovimentacao)  throws Exception, Throwable {
 		
 		int id = Integer.parseInt(idMovimentacao);
 		 

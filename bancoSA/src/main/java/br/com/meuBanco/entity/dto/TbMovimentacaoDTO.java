@@ -1,60 +1,93 @@
 package br.com.meuBanco.entity.dto;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 
 public class TbMovimentacaoDTO {
 
 	
-	private int idMovimentacao;	
-	private BigDecimal tbMovimentacaoCredito;		
-	private Date tbMovimentacaoData;	
-	private BigDecimal tbMovimentacaoDebito;
-	private int contaNumero;
+	private int        idMovimentacao;	
+	private BigDecimal movimentacaoCredito;		
+	private String     movimentacaoData;	
+	private BigDecimal movimentacaoDebito;
+	
+	private int    movimentacaoIdConta;
+	private int    contaNumero;
 	private String contaDigito;
 	
 	
 	public TbMovimentacaoDTO() {
-		
 	}
 
 
 	public int getIdMovimentacao() {
 		return idMovimentacao;
 	}
+
+
 	public void setIdMovimentacao(int idMovimentacao) {
 		this.idMovimentacao = idMovimentacao;
 	}
-	public BigDecimal getTbMovimentacaoCredito() {
-		return tbMovimentacaoCredito;
+
+
+	public BigDecimal getMovimentacaoCredito() {
+		return movimentacaoCredito;
 	}
-	public void setTbMovimentacaoCredito(BigDecimal tbMovimentaCredito) {
-		this.tbMovimentacaoCredito = tbMovimentaCredito;
+
+
+	public void setMovimentacaoCredito(BigDecimal movimentacaoCredito) {
+		this.movimentacaoCredito = movimentacaoCredito;
 	}
-	public Date getTbMovimentacaoData() {
-		return tbMovimentacaoData;
+
+
+	public String getMovimentacaoData() {
+		return movimentacaoData;
 	}
-	public void setTbMovimentacaoData(Date tbMovimentacaoData) {
-		this.tbMovimentacaoData = tbMovimentacaoData;
+
+
+	public void setMovimentacaoData(String movimentacaoData) {
+		this.movimentacaoData = movimentacaoData;
 	}
-	public BigDecimal getTbMovimentacaoDebito() {
-		return tbMovimentacaoDebito;
+
+
+	public BigDecimal getMovimentacaoDebito() {
+		return movimentacaoDebito;
 	}
-	public void setTbMovimentacaoDebito(BigDecimal tbMovimentacaoDebito) {
-		this.tbMovimentacaoDebito = tbMovimentacaoDebito;
+
+
+	public void setMovimentacaoDebito(BigDecimal movimentacaoDebito) {
+		this.movimentacaoDebito = movimentacaoDebito;
 	}
+
+
+	public int getMovimentacaoIdConta() {
+		return movimentacaoIdConta;
+	}
+
+
+	public void setMovimentacaoIdConta(int movimentacaoIdConta) {
+		this.movimentacaoIdConta = movimentacaoIdConta;
+	}
+
+
 	public int getContaNumero() {
 		return contaNumero;
 	}
+
+
 	public void setContaNumero(int contaNumero) {
 		this.contaNumero = contaNumero;
 	}
+
+
 	public String getContaDigito() {
 		return contaDigito;
 	}
+
+
 	public void setContaDigito(String contaDigito) {
 		this.contaDigito = contaDigito;
 	}
+
 
 }

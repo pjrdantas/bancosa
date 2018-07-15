@@ -2,7 +2,6 @@ package br.com.meuBanco.service.impl;
 
 import java.util.List;
 
-import br.com.meuBanco.entity.TbCliente;
 import br.com.meuBanco.entity.dto.TbClienteDTO;
 
 
@@ -11,9 +10,9 @@ import br.com.meuBanco.entity.dto.TbClienteDTO;
 
 public interface ITbClienteService {
 	
-    void addTbCliente(TbCliente tbCliente);
-    void updateTbCliente(TbCliente tbCliente);	
-    List<TbClienteDTO> consultar();
-    TbClienteDTO getTbClienteById(int id);
-    void deleteTbCliente(int id);
+    void addTbClienteDTO(TbClienteDTO tbClienteDTO)  throws Exception, Throwable ;
+    void updateTbClienteDTO(TbClienteDTO tbClienteDTO)  throws Exception, Throwable ;	
+    List<TbClienteDTO> consultar()  throws Exception, Throwable ;
+    TbClienteDTO getTbClienteById(int id)  throws Exception, Throwable ;
+    void deleteTbCliente(int id)  throws Exception, Throwable ;
 }

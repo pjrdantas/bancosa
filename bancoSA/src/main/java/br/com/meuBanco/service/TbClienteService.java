@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.meuBanco.dao.impl.ItbClienteDAO;
-import br.com.meuBanco.entity.TbCliente;
 import br.com.meuBanco.entity.dto.TbClienteDTO;
 import br.com.meuBanco.service.impl.ITbClienteService;
 
@@ -25,28 +24,28 @@ public class TbClienteService  implements ITbClienteService {
 
 
 	@Override
-	public void addTbCliente(TbCliente tbCliente) {
-		tbClienteDAO.addTbCliente(tbCliente);
+	public void addTbClienteDTO(TbClienteDTO tbClienteDTO)   throws Exception, Throwable {
+		tbClienteDAO.addTbClienteDTO(tbClienteDTO);
 		
 	}
 	
 
 	 
 	@Override
-	public void updateTbCliente(TbCliente tbCliente) {
-		tbClienteDAO.updateTbCliente(tbCliente);
+	public void updateTbClienteDTO(TbClienteDTO tbClienteDTO)   throws Exception, Throwable {
+		tbClienteDAO.updateTbClienteDTO(tbClienteDTO);
 	}
 	
 
 	@Override
-	public List<TbClienteDTO> consultar(){
+	public List<TbClienteDTO> consultar()  throws Exception, Throwable {
 		return tbClienteDAO.getAllTbClientes();
 	}
 
 	
 	
 	@Override
-	public TbClienteDTO getTbClienteById(int id) {
+	public TbClienteDTO getTbClienteById(int id)  throws Exception, Throwable  {
 		TbClienteDTO obj = tbClienteDAO.getTbClienteById(id);
 		return obj;
 	}	
@@ -54,7 +53,7 @@ public class TbClienteService  implements ITbClienteService {
 	 
 	
 	@Override
-	public void deleteTbCliente(int id) {
+	public void deleteTbCliente(int id)  throws Exception, Throwable  {
 		tbClienteDAO.deleteTbCliente(id);
 	}
 

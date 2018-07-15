@@ -10,9 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.meuBanco.dao.impl.ItbContaDAO;
-import br.com.meuBanco.entity.TbConta;
 import br.com.meuBanco.entity.dto.TbContaDTO;
-
 
 
 
@@ -28,7 +26,7 @@ public class TbContaDAO implements ItbContaDAO {
 	
 	
 	@Override
-	public void addTbConta(TbConta tbConta) {
+	public void addTbContaDTO(TbContaDTO tbContaDTO)  throws Exception, Throwable {
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -43,19 +41,17 @@ public class TbContaDAO implements ItbContaDAO {
 		sql.append( "  values (:idConta, :tbContaDigito, :tbContaNumero, :tbContaTipo, :tbAgencia, :tbCliente)");
 		
 		SqlParameterSource params = new MapSqlParameterSource()
-				.addValue("idConta", tbConta.getIdConta())
-				.addValue("tbContaDigito", tbConta.getTbContaDigito())
-				.addValue("tbContaNumero", tbConta.getTbContaNumero())
-				.addValue("tbContaTipo", tbConta.getTbContaTipo())
-				.addValue("tbAgencia", tbConta.getTbAgencia().getIdAgencia())
-				.addValue("tbCliente", tbConta.getTbCliente().getIdCliente());
+				.addValue("idConta", tbContaDTO.getIdConta())
+				.addValue("tbContaDigito", tbContaDTO.getContaDigito())
+				.addValue("tbContaNumero", tbContaDTO.getContaNumero())
+				.addValue("tbContaTipo", tbContaDTO.getContaTipo())
+				.addValue("tbAgencia", tbContaDTO.getContaIdAgencia())
+				.addValue("tbCliente", tbContaDTO.getContaIdCliente());
 		
 		try{
-	    	 jdbcTemplate.update(sql.toString(), params);
-	         
+	    	 jdbcTemplate.update(sql.toString(), params);	         
 	     }catch (Exception e){
-	    	 System.out.println("-----------------ERRO NO INSERT DA CONTA-------------------------------" + e.toString());
-	        
+	    	 System.out.println("-----------------ERRO NO INSERT DA CONTA-------------------------------" + e.toString());	        
 	     }	
 	}
 	
@@ -63,7 +59,7 @@ public class TbContaDAO implements ItbContaDAO {
 	
 
 	@Override
-	public void updateTbConta(TbConta tbConta) {
+	public void updateTbContaDTO(TbContaDTO tbContaDTO)  throws Exception, Throwable {
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -77,12 +73,12 @@ public class TbContaDAO implements ItbContaDAO {
 		sql.append(" WHERE id_conta = :idConta");
 		
 		SqlParameterSource params = new MapSqlParameterSource()				
-				.addValue("tbContaDigito", tbConta.getTbContaDigito())
-				.addValue("tbContaNumero", tbConta.getTbContaNumero())
-				.addValue("tbContaTipo", tbConta.getTbContaTipo())
-				.addValue("tbAgencia", tbConta.getTbAgencia().getIdAgencia())
-				.addValue("tbCliente", tbConta.getTbCliente().getIdCliente())
-				.addValue("idConta", tbConta.getIdConta());
+				.addValue("idConta", tbContaDTO.getIdConta())
+				.addValue("tbContaDigito", tbContaDTO.getContaDigito())
+				.addValue("tbContaNumero", tbContaDTO.getContaNumero())
+				.addValue("tbContaTipo", tbContaDTO.getContaTipo())
+				.addValue("tbAgencia", tbContaDTO.getContaIdAgencia())
+				.addValue("tbCliente", tbContaDTO.getContaIdCliente());
 		
 		try{
 	    	 jdbcTemplate.update(sql.toString(), params);
@@ -102,14 +98,16 @@ public class TbContaDAO implements ItbContaDAO {
 			.append("  ,c.tb_conta_digito")
 			.append("  ,c.tb_conta_numero")
 			.append("  ,c.tb_conta_tipo")
+			.append("  ,i.id_agencia")
 			.append("  ,i.tb_agencia_codigo")
 			.append("  ,i.tb_agencia_digito")
+			.append("  ,a.id_cliente")
 			.append("  ,a.tb_cliente_nome")
 			.append("  ,a.tb_cliente_senha")
-			.append("  FROM tb_conta c INNER JOIN tb_agencia i");
-			
+			.append("  FROM tb_conta c INNER JOIN tb_agencia i ON i.id_agencia = c.tb_agencia_id_agencia  ")
+	        .append("                  INNER JOIN tb_cliente a ON a.id_cliente = c.tb_cliente_id_cliente  ");
 		
-	private List<TbContaDTO> devolveListaObjetos(StringBuilder sql, SqlParameterSource params) {
+	private List<TbContaDTO> devolveListaObjetos(StringBuilder sql, SqlParameterSource params)  throws Exception, Throwable {
 		return jdbcTemplate.query(sql.toString(), params, (rs, i) -> {
 		
 			TbContaDTO tbContaDTO = new TbContaDTO();
@@ -118,8 +116,10 @@ public class TbContaDAO implements ItbContaDAO {
 			tbContaDTO.setContaDigito(rs.getInt("c.tb_conta_digito"));
 			tbContaDTO.setContaNumero(rs.getInt("c.tb_conta_numero"));
 			tbContaDTO.setContaTipo(rs.getInt("c.tb_conta_tipo"));
+			tbContaDTO.setContaIdAgencia(rs.getInt("i.id_agencia"));
 			tbContaDTO.setAgenciaCodigo(rs.getInt("i.tb_agencia_codigo"));
 			tbContaDTO.setAgenciaDigito(rs.getString("i.tb_agencia_digito"));
+			tbContaDTO.setContaIdCliente(rs.getInt("a.id_cliente"));
 			tbContaDTO.setClienteNome(rs.getString("a.tb_cliente_nome"));
 			tbContaDTO.setClienteSenha(rs.getInt("a.tb_cliente_senha"));
 	
@@ -130,11 +130,10 @@ public class TbContaDAO implements ItbContaDAO {
 	
 	
 	@Override
-	public List<TbContaDTO> getAllTbContas() {
+	public List<TbContaDTO> getAllTbContas()  throws Exception, Throwable {
 		
 		StringBuilder sql = new StringBuilder(sqlSelectPrincipal)		
-		.append("  ON i.id_agencia = c.tb_agencia_id_agencia  ")
-		.append("  INNER JOIN tb_cliente a ON a.id_cliente = c.tb_cliente_id_cliente  ");
+		.append("  ORDER BY c.tb_cliente_id_cliente  ");
 		
 		return devolveListaObjetos(sql, null);
 	}
@@ -142,7 +141,7 @@ public class TbContaDAO implements ItbContaDAO {
 
 	
 	
-	private TbContaDTO devolveObjeto(StringBuilder sql, SqlParameterSource params) {
+	private TbContaDTO devolveObjeto(StringBuilder sql, SqlParameterSource params)  throws Exception, Throwable {
 		return jdbcTemplate.queryForObject(sql.toString(), params, (rs, i) -> {
 						
 			TbContaDTO tbContaDTO = new TbContaDTO();
@@ -151,8 +150,10 @@ public class TbContaDAO implements ItbContaDAO {
 			tbContaDTO.setContaDigito(rs.getInt("c.tb_conta_digito"));
 			tbContaDTO.setContaNumero(rs.getInt("c.tb_conta_numero"));
 			tbContaDTO.setContaTipo(rs.getInt("c.tb_conta_tipo"));
+			tbContaDTO.setContaIdAgencia(rs.getInt("i.id_agencia"));
 			tbContaDTO.setAgenciaCodigo(rs.getInt("i.tb_agencia_codigo"));
 			tbContaDTO.setAgenciaDigito(rs.getString("i.tb_agencia_digito"));
+			tbContaDTO.setContaIdCliente(rs.getInt("a.id_cliente"));
 			tbContaDTO.setClienteNome(rs.getString("a.tb_cliente_nome"));
 			tbContaDTO.setClienteSenha(rs.getInt("a.tb_cliente_senha"));
 						
@@ -162,12 +163,10 @@ public class TbContaDAO implements ItbContaDAO {
 	}
 		
 	 
-	public TbContaDTO getTbContaById(int id) {
+	public TbContaDTO getTbContaById(int id)  throws Exception, Throwable {
 		
 		StringBuilder sql = new StringBuilder(sqlSelectPrincipal);		
-		sql.append("  ON i.id_agencia = c.tb_agencia_id_agencia  ")
-		   .append("  INNER JOIN tb_cliente a ON a.id_cliente = c.tb_cliente_id_cliente  ")
-		   .append("  WHERE c.id_conta = :idConta ");
+		sql.append("  WHERE c.id_conta = :idConta ");
 		
 		SqlParameterSource params = new MapSqlParameterSource().addValue("idConta", id);
 		
@@ -180,7 +179,7 @@ public class TbContaDAO implements ItbContaDAO {
 
 
 	@Override
-	public void deleteTbConta(int id) {
+	public void deleteTbConta(int id)  throws Exception, Throwable {
 		
 		StringBuilder sql = new StringBuilder();
 		

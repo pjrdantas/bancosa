@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.meuBanco.dao.impl.ItbBancoDAO;
-import br.com.meuBanco.entity.TbBanco;
 import br.com.meuBanco.entity.dto.TbBancoDTO;
 
 
@@ -26,7 +25,7 @@ public class TbBancoDAO implements ItbBancoDAO {
 	
 	
 	@Override
-	public void addTbBanco(TbBanco tbBanco) {
+	public void addTbBancoDTO(TbBancoDTO tbBancoDTO)   throws Exception, Throwable {
 						
 		StringBuilder sql = new StringBuilder();
 		
@@ -38,9 +37,9 @@ public class TbBancoDAO implements ItbBancoDAO {
 		sql.append( "  values (:idBanco, :tbBancoCodigo, :tbBancoNome)");
 		
 		SqlParameterSource params = new MapSqlParameterSource()
-				.addValue("idBanco", tbBanco.getIdBanco())
-				.addValue("tbBancoCodigo", tbBanco.getTbBancoCodigo())
-				.addValue("tbBancoNome", tbBanco.getTbBancoNome());
+				.addValue("idBanco", tbBancoDTO.getIdBanco())
+				.addValue("tbBancoCodigo", tbBancoDTO.getBancoCodigo())
+				.addValue("tbBancoNome", tbBancoDTO.getBancoNome());
 		
 		try{
 	    	 jdbcTemplate.update(sql.toString(), params);
@@ -55,7 +54,7 @@ public class TbBancoDAO implements ItbBancoDAO {
 	
 		
 	@Override
-	public void updateTbBanco(TbBanco tbBanco) {
+	public void updateTbBancoDTO(TbBancoDTO tbBancoDTO)  throws Exception, Throwable {
 				
 		StringBuilder sql = new StringBuilder();
 		
@@ -66,9 +65,9 @@ public class TbBancoDAO implements ItbBancoDAO {
 		sql.append(" WHERE id_banco = :idBanco");
 		
 		SqlParameterSource params = new MapSqlParameterSource()				
-				.addValue("tbBancoCodigo", tbBanco.getTbBancoCodigo())
-				.addValue("tbBancoNome", tbBanco.getTbBancoNome())
-				.addValue("idBanco", tbBanco.getIdBanco());
+				.addValue("tbBancoCodigo", tbBancoDTO.getBancoCodigo())
+				.addValue("tbBancoNome", tbBancoDTO.getBancoNome())
+				.addValue("idBanco", tbBancoDTO.getIdBanco());
 		
 		try{
 	    	 jdbcTemplate.update(sql.toString(), params);
@@ -89,7 +88,7 @@ public class TbBancoDAO implements ItbBancoDAO {
 			.append("  ,tb_banco_nome")
 			.append("  FROM tb_banco ");
 					
-	private List<TbBancoDTO> devolveListaObjetos(StringBuilder sql, SqlParameterSource params) {
+	private List<TbBancoDTO> devolveListaObjetos(StringBuilder sql, SqlParameterSource params)  throws Exception, Throwable {
 		return jdbcTemplate.query(sql.toString(), params, (rs, i) -> {
 		
 			TbBancoDTO tbBancoDTO = new TbBancoDTO();
@@ -105,7 +104,7 @@ public class TbBancoDAO implements ItbBancoDAO {
 	
 	
 	@Override
-	public List<TbBancoDTO> getAllTbBancos() {
+	public List<TbBancoDTO> getAllTbBancos()  throws Exception, Throwable {
 		
 		StringBuilder sql = new StringBuilder(sqlSelectPrincipal)		
 		.append("  ORDER BY  tb_banco_codigo ");
@@ -115,7 +114,7 @@ public class TbBancoDAO implements ItbBancoDAO {
 	
 	
 	
-	private TbBancoDTO devolveObjeto(StringBuilder sql, SqlParameterSource params) {
+	private TbBancoDTO devolveObjeto(StringBuilder sql, SqlParameterSource params)  throws Exception, Throwable {
 		return jdbcTemplate.queryForObject(sql.toString(), params, (rs, i) -> {
 						
 			TbBancoDTO tbBancoDTO = new TbBancoDTO();
@@ -130,7 +129,7 @@ public class TbBancoDAO implements ItbBancoDAO {
 	}
 		
 	@Override 
-	public TbBancoDTO getTbBancoById(int id) {
+	public TbBancoDTO getTbBancoById(int id)  throws Exception, Throwable {
 		
 		StringBuilder sql = new StringBuilder(sqlSelectPrincipal);		
 		sql.append("  WHERE id_banco = :idBanco ");
@@ -145,7 +144,7 @@ public class TbBancoDAO implements ItbBancoDAO {
 	
 		
 	@Override
-	public void deleteTbBanco(int id) {
+	public void deleteTbBanco(int id)  throws Exception, Throwable {
 				
 		StringBuilder sql = new StringBuilder();
 		

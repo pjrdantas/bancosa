@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.meuBanco.dao.impl.ItbNotaDAO;
-import br.com.meuBanco.entity.TbNota;
 import br.com.meuBanco.entity.dto.TbNotaDTO;
 
 
@@ -26,7 +25,7 @@ public class TbNotaDAO implements ItbNotaDAO {
 	
 	
 	@Override
-	public void addTbNota(TbNota tbNota) {
+	public void addTbNotaDTO(TbNotaDTO tbNotaDTO)  throws Exception, Throwable {
 		
 				
 		StringBuilder sql = new StringBuilder();
@@ -38,8 +37,8 @@ public class TbNotaDAO implements ItbNotaDAO {
 		sql.append( "  values (:idNotas, :tbNotasValor)");
 		
 		SqlParameterSource params = new MapSqlParameterSource()
-				.addValue("idNotas", tbNota.getIdNotas())
-				.addValue("tbNotasValor", tbNota.getTbNotasValor());
+				.addValue("idNotas", tbNotaDTO.getIdNotas())
+				.addValue("tbNotasValor", tbNotaDTO.getNotasValor());
 		
 		try{
 	    	 jdbcTemplate.update(sql.toString(), params);
@@ -54,7 +53,7 @@ public class TbNotaDAO implements ItbNotaDAO {
 	
 		
 	@Override
-	public void updateTbNota(TbNota tbNota) {
+	public void updateTbNotaDTO(TbNotaDTO tbNotaDTO)  throws Exception, Throwable {
 		
 		
 		
@@ -66,8 +65,8 @@ public class TbNotaDAO implements ItbNotaDAO {
 		sql.append(" WHERE id_notas = :idNotas");
 		
 		SqlParameterSource params = new MapSqlParameterSource()				
-				.addValue("tbNotasValor", tbNota.getTbNotasValor())
-				.addValue("idNotas", tbNota.getIdNotas());
+				.addValue("tbNotasValor", tbNotaDTO.getNotasValor())
+				.addValue("idNotas", tbNotaDTO.getIdNotas());
 		
 		try{
 	    	 jdbcTemplate.update(sql.toString(), params);
@@ -87,7 +86,7 @@ public class TbNotaDAO implements ItbNotaDAO {
 			.append("  ,tb_notas_valor")
 			.append("  FROM tb_notas ");
 					
-	private List<TbNotaDTO> devolveListaObjetos(StringBuilder sql, SqlParameterSource params) {
+	private List<TbNotaDTO> devolveListaObjetos(StringBuilder sql, SqlParameterSource params)  throws Exception, Throwable {
 		return jdbcTemplate.query(sql.toString(), params, (rs, i) -> {
 		
 			TbNotaDTO tbNotaDTO = new TbNotaDTO();
@@ -102,7 +101,7 @@ public class TbNotaDAO implements ItbNotaDAO {
 	
 	
 	@Override
-	public List<TbNotaDTO> getAllTbNotas() {
+	public List<TbNotaDTO> getAllTbNotas()  throws Exception, Throwable {
 		
 		StringBuilder sql = new StringBuilder(sqlSelectPrincipal)		
 		.append("  ORDER BY  tb_notas_valor ");
@@ -112,21 +111,26 @@ public class TbNotaDAO implements ItbNotaDAO {
 	
 	
 	
-	private TbNotaDTO devolveObjeto(StringBuilder sql, SqlParameterSource params) {
+	private TbNotaDTO devolveObjeto(StringBuilder sql, SqlParameterSource params)  throws Exception, Throwable {
 		return jdbcTemplate.queryForObject(sql.toString(), params, (rs, i) -> {
 						
 			TbNotaDTO tbNotaDTO = new TbNotaDTO();
 
 			tbNotaDTO.setIdNotas(rs.getInt("id_notas"));
 			tbNotaDTO.setNotasValor(rs.getInt("tb_notas_valor"));
-									
-			return tbNotaDTO;
+			
+		try {							
+			return tbNotaDTO;			
+	     }catch (Exception e){
+	    	 System.out.println("-----------------ERRO CONSULTA DA NOTA-------------------------------" + e.toString());
+	    	 return null;
+	     }	
 
 		});
 	}
 		
 	@Override 
-	public TbNotaDTO getTbNotaById(int id) {
+	public TbNotaDTO getTbNotaById(int id)  throws Exception, Throwable {
 		
 		StringBuilder sql = new StringBuilder(sqlSelectPrincipal);		
 		sql.append("  WHERE id_notas = :idNotas ");
@@ -141,7 +145,7 @@ public class TbNotaDAO implements ItbNotaDAO {
 	
 		
 	@Override
-	public void deleteTbNota(int id) {
+	public void deleteTbNota(int id)  throws Exception, Throwable {
 				
 		StringBuilder sql = new StringBuilder();
 		

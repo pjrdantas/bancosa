@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.meuBanco.dao.impl.ItbMovimentacaoDAO;
-import br.com.meuBanco.entity.TbMovimentacao;
 import br.com.meuBanco.entity.dto.TbMovimentacaoDTO;
 import br.com.meuBanco.service.impl.ITbMovimentacaoService;
 
@@ -25,28 +24,28 @@ public class TbMovimentacaoService  implements ITbMovimentacaoService {
 
 
 	@Override
-	public void addTbMovimentacao(TbMovimentacao tbMovimentacao) {
-		tbMovimentacaoDAO.addTbMovimentacao(tbMovimentacao);
+	public void addTbMovimentacaoDTO(TbMovimentacaoDTO tbMovimentacaoDTO)   throws Exception, Throwable {
+		tbMovimentacaoDAO.addTbMovimentacaoDTO(tbMovimentacaoDTO);
 		
 	}
 	
 
 	 
 	@Override
-	public void updateTbMovimentacao(TbMovimentacao tbMovimentacao) {
-		tbMovimentacaoDAO.updateTbMovimentacao(tbMovimentacao);
+	public void updateTbMovimentacaoDTO(TbMovimentacaoDTO tbMovimentacaoDTO)  throws Exception, Throwable  {
+		tbMovimentacaoDAO.updateTbMovimentacaoDTO(tbMovimentacaoDTO);
 	}
 	
 
 	@Override
-	public List<TbMovimentacaoDTO> consultar(){
+	public List<TbMovimentacaoDTO> consultar()  throws Exception, Throwable {
 		return tbMovimentacaoDAO.getAllTbMovimentacaos();
 	}
 
 	
 	
 	@Override
-	public TbMovimentacaoDTO getTbMovimentacaoById(int id) {
+	public TbMovimentacaoDTO getTbMovimentacaoById(int id)  throws Exception, Throwable  {
 		TbMovimentacaoDTO obj = tbMovimentacaoDAO.getTbMovimentacaoById(id);
 		return obj;
 	}	
@@ -54,7 +53,7 @@ public class TbMovimentacaoService  implements ITbMovimentacaoService {
 	 
 	
 	@Override
-	public void deleteTbMovimentacao(int id) {
+	public void deleteTbMovimentacao(int id)  throws Exception, Throwable  {
 		tbMovimentacaoDAO.deleteTbMovimentacao(id);
 	}
 

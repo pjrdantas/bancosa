@@ -26,14 +26,14 @@ public class TbMovimentacao {
 	@Column(name="id_movimentacao", unique=true, nullable=false)
 	private int idMovimentacao;
 
-	@Column(name="tb_movimentacao_credito", nullable=false, precision=10, scale=2)
+	@Column(name="tb_movimentacao_credito", nullable=true, precision=10, scale=2)
 	private BigDecimal tbMovimentacaoCredito;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="tb_movimentacao_data", nullable=false)
+	@Column(name="tb_movimentacao_data", nullable=true)
 	private Date tbMovimentacaoData;
 
-	@Column(name="tb_movimentacao_debito", nullable=false, precision=10, scale=2)
+	@Column(name="tb_movimentacao_debito", nullable=true, precision=10, scale=2)
 	private BigDecimal tbMovimentacaoDebito;
 
 	//bi-directional many-to-one association to TbConta

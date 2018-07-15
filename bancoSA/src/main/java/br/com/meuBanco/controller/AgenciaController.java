@@ -13,11 +13,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.meuBanco.entity.TbAgencia;
 import br.com.meuBanco.entity.dto.TbAgenciaDTO;
 import br.com.meuBanco.response.ResponseModel;
 import br.com.meuBanco.service.impl.ITbAgenciaService;
-
 
 
 
@@ -34,38 +32,36 @@ public class AgenciaController {
 
 	/**
 	 * 
-	 * @param tbAgencia
+	 * @param tbAgenciaDTO
 	 * @return
+	 * @throws Exception
+	 * @throws Throwable
 	 */
 	@RequestMapping(value="/agencia", method = RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody ResponseModel salvar(@RequestBody TbAgencia tbAgencia){
-      
-	System.out.println("-------------------------------------------------------------------"+tbAgencia.getIdAgencia()+" "+tbAgencia.getTbAgenciaCodigo()+" "+tbAgencia.getTbAgenciaDigito()+" "+tbAgencia.getTbBanco().getIdBanco());
-	
+	public @ResponseBody ResponseModel salvar(@RequestBody TbAgenciaDTO tbAgenciaDTO)  throws Exception, Throwable {      
+
 		try {			 
-			this.agenciaService.addTbAgencia(tbAgencia); 
+			this.agenciaService.addTbAgenciaDTO(tbAgenciaDTO); 
 			return new ResponseModel(1,"Registro salvo com sucesso!"); 
 		}catch(Exception e) {
 			return new ResponseModel(0,e.getMessage());			
 		}
 		
 	}
-
-	
  
 	
 	/**
 	 * 
-	 * @param tbAgencia
+	 * @param tbAgenciaDTO
 	 * @return
 	 * @throws Exception
 	 * @throws Throwable
 	 */
 	@RequestMapping(value="/agencia", method = RequestMethod.PUT, consumes=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody ResponseModel atualizar(@RequestBody TbAgencia tbAgencia)  throws Exception, Throwable {
+	public @ResponseBody ResponseModel atualizar(@RequestBody TbAgenciaDTO tbAgenciaDTO)  throws Exception, Throwable {
 
 		try {			 
-			this.agenciaService.updateTbAgencia(tbAgencia);		
+			this.agenciaService.updateTbAgenciaDTO(tbAgenciaDTO);		
 			return new ResponseModel(1,"Registro atualizado com sucesso!"); 
 		}catch(Exception e) { 
 			return new ResponseModel(0,e.getMessage());
@@ -78,21 +74,27 @@ public class AgenciaController {
 	/**
 	 * 
 	 * @return
+	 * @throws Exception
+	 * @throws Throwable
 	 */
 	@RequestMapping(value="/agencia", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody List<TbAgenciaDTO> consultar(){
+	public @ResponseBody List<TbAgenciaDTO> consultar()  throws Exception, Throwable {
 				
 		return this.agenciaService.consultar();			
 	}
+	
+	
 	
 
 	/**
 	 * 
 	 * @param idAgencia
 	 * @return
+	 * @throws Exception
+	 * @throws Throwable
 	 */
 	@RequestMapping(value="/agencia/{idAgencia}", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody TbAgenciaDTO buscar(@PathVariable("idAgencia") String idAgencia){
+	public @ResponseBody TbAgenciaDTO buscar(@PathVariable("idAgencia") String idAgencia)  throws Exception, Throwable {
 		
 		int id = Integer.parseInt(idAgencia);
 		return this.agenciaService.getTbAgenciaById(id);
@@ -105,9 +107,11 @@ public class AgenciaController {
 	 * 
 	 * @param idAgencia
 	 * @return
+	 * @throws Exception
+	 * @throws Throwable
 	 */
 	@RequestMapping(value="/agencia/{idAgencia}", method = RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody ResponseModel excluir(@PathVariable("idAgencia") String idAgencia){
+	public @ResponseBody ResponseModel excluir(@PathVariable("idAgencia") String idAgencia)  throws Exception, Throwable {
 		
 		int id = Integer.parseInt(idAgencia);
 		 

@@ -5,6 +5,7 @@ public class TbClienteDTO {
 	private int idCliente;	
 	private String clienteNome;	
 	private int clienteSenha;
+	private int clienteIAgencia;
 	private int agenciaCodigo;
 	private String agenciaDigito;
 		
@@ -34,6 +35,14 @@ public class TbClienteDTO {
 
 	public void setClienteSenha(int clienteSenha) {
 		this.clienteSenha = clienteSenha;
+	}
+
+	public int getClienteIAgencia() {
+		return clienteIAgencia;
+	}
+
+	public void setClienteIAgencia(int clienteIAgencia) {
+		this.clienteIAgencia = clienteIAgencia;
 	}
 
 	public int getAgenciaCodigo() {

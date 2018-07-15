@@ -7,13 +7,14 @@ public class TbContaDTO {
 	private int contaDigito;	
 	private int contaNumero;
 	private int contaTipo;
+	private int contaIdAgencia;
 	private int agenciaCodigo;
 	private String agenciaDigito;
+	private int contaIdCliente;
 	private String clienteNome;
 	private int clienteSenha;
 	
-	public TbContaDTO() {
-		
+	public TbContaDTO() {		
 	}
 
 	public int getIdConta() {
@@ -48,6 +49,14 @@ public class TbContaDTO {
 		this.contaTipo = contaTipo;
 	}
 
+	public int getContaIdAgencia() {
+		return contaIdAgencia;
+	}
+
+	public void setContaIdAgencia(int contaIdAgencia) {
+		this.contaIdAgencia = contaIdAgencia;
+	}
+
 	public int getAgenciaCodigo() {
 		return agenciaCodigo;
 	}
@@ -62,6 +71,14 @@ public class TbContaDTO {
 
 	public void setAgenciaDigito(String agenciaDigito) {
 		this.agenciaDigito = agenciaDigito;
+	}
+
+	public int getContaIdCliente() {
+		return contaIdCliente;
+	}
+
+	public void setContaIdCliente(int contaIdCliente) {
+		this.contaIdCliente = contaIdCliente;
 	}
 
 	public String getClienteNome() {
@@ -79,5 +96,5 @@ public class TbContaDTO {
 	public void setClienteSenha(int clienteSenha) {
 		this.clienteSenha = clienteSenha;
 	}
-
+	
 }

@@ -1,5 +1,7 @@
 package br.com.meuBanco.dao;
 
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -11,11 +13,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.meuBanco.dao.impl.ItbMovimentacaoDAO;
-import br.com.meuBanco.entity.TbMovimentacao;
 import br.com.meuBanco.entity.dto.TbMovimentacaoDTO;
-
-
-
 
 
 @Transactional
@@ -27,12 +25,28 @@ public class TbMovimentacaoDAO implements ItbMovimentacaoDAO {
 	@Autowired
     private NamedParameterJdbcTemplate jdbcTemplate;
 	
+	SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
+	Date data;
 	
 	@Override
-	public void addTbMovimentacao(TbMovimentacao tbMovimentacao) {
+	public void addTbMovimentacaoDTO(TbMovimentacaoDTO tbMovimentacaoDTO)  throws Exception, Throwable  {
+	
+		System.out.println("-------------------------------------------------------------------"
+				+tbMovimentacaoDTO.getIdMovimentacao()+" "
+				+tbMovimentacaoDTO.getMovimentacaoCredito()+" "
+				+tbMovimentacaoDTO.getMovimentacaoData()+" "
+				+tbMovimentacaoDTO.getMovimentacaoDebito()+" "
+				+tbMovimentacaoDTO.getMovimentacaoIdConta());
+
 		
 		StringBuilder sql = new StringBuilder();
-
+        if (tbMovimentacaoDTO.getMovimentacaoCredito() == null) {
+        	tbMovimentacaoDTO.setMovimentacaoCredito(BigDecimal.ZERO);       	
+        }
+        
+        if (tbMovimentacaoDTO.getMovimentacaoDebito() == null) {
+        	tbMovimentacaoDTO.setMovimentacaoDebito(BigDecimal.ZERO);
+        }
 		sql.append(	"  INSERT INTO ");
 		sql.append( "  tb_movimentacao (");
 		sql.append( "  id_movimentacao, ");
@@ -43,15 +57,14 @@ public class TbMovimentacaoDAO implements ItbMovimentacaoDAO {
 		sql.append( "  values (:idMovimentacao, :tbMovimentacaoCredito, :tbMovimentacaoData, :tbMovimentacaoDebito, :tbConta)");
 		
 		SqlParameterSource params = new MapSqlParameterSource()
-				.addValue("idMovimentacao", tbMovimentacao.getIdMovimentacao())
-				.addValue("tbMovimentacaoCredito", tbMovimentacao.getTbMovimentacaoCredito())
+				.addValue("idMovimentacao", tbMovimentacaoDTO.getIdMovimentacao())
+				.addValue("tbMovimentacaoCredito", tbMovimentacaoDTO.getMovimentacaoCredito())
 				.addValue("tbMovimentacaoData", new Date())
-				.addValue("tbMovimentacaoDebito", tbMovimentacao.getTbMovimentacaoDebito())
-				.addValue("tbConta", tbMovimentacao.getTbConta().getIdConta());
+				.addValue("tbMovimentacaoDebito", tbMovimentacaoDTO.getMovimentacaoDebito())
+				.addValue("tbConta", tbMovimentacaoDTO.getMovimentacaoIdConta());
 		
 		try{
-	    	 jdbcTemplate.update(sql.toString(), params);
-	         
+	    	 jdbcTemplate.update(sql.toString(), params);	         
 	     }catch (Exception e){
 	    	 System.out.println("-----------------ERRO NO INSERT DO MOVIMENTO-------------------------------" + e.toString());
 	        
@@ -62,7 +75,7 @@ public class TbMovimentacaoDAO implements ItbMovimentacaoDAO {
 	
 
 	@Override
-	public void updateTbMovimentacao(TbMovimentacao tbMovimentacao) {
+	public void updateTbMovimentacaoDTO(TbMovimentacaoDTO tbMovimentacaoDTO)  throws Exception, Throwable  {
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -74,14 +87,14 @@ public class TbMovimentacaoDAO implements ItbMovimentacaoDAO {
 		sql.append(" WHERE id_movimentacao = :idMovimentacao");
 		
 		SqlParameterSource params = new MapSqlParameterSource()
-				.addValue("tbMovimentacaoCredito", tbMovimentacao.getTbMovimentacaoCredito())
-				.addValue("tbMovimentacaoDebito", tbMovimentacao.getTbMovimentacaoDebito())
-				.addValue("tbConta", tbMovimentacao.getTbConta().getIdConta())
-				.addValue("idMovimentacao", tbMovimentacao.getIdMovimentacao());
+				.addValue("idMovimentacao", tbMovimentacaoDTO.getIdMovimentacao())
+				.addValue("tbMovimentacaoCredito", tbMovimentacaoDTO.getMovimentacaoCredito())
+				.addValue("tbMovimentacaoData", new Date())
+				.addValue("tbMovimentacaoDebito", tbMovimentacaoDTO.getMovimentacaoDebito())
+				.addValue("tbConta", tbMovimentacaoDTO.getMovimentacaoIdConta());
 		
 		try{
-	    	 jdbcTemplate.update(sql.toString(), params);
-	         
+	    	 jdbcTemplate.update(sql.toString(), params);	         
 	     }catch (Exception e){
 	    	 System.out.println("-----------------ERRO NO UPDATE DO MOVIMENTO-------------------------------" + e.toString());
 	        
@@ -96,20 +109,24 @@ public class TbMovimentacaoDAO implements ItbMovimentacaoDAO {
 			.append("  ,c.tb_movimentacao_credito")
 			.append("  ,c.tb_movimentacao_data")
 			.append("  ,c.tb_movimentacao_debito")
+			.append("  ,i.id_conta")
 			.append("  ,i.tb_conta_digito")
 			.append("  ,i.tb_conta_numero")
 			.append("  FROM tb_movimentacao c INNER JOIN tb_conta i");
 			
 		
-	private List<TbMovimentacaoDTO> devolveListaObjetos(StringBuilder sql, SqlParameterSource params) {
+	private List<TbMovimentacaoDTO> devolveListaObjetos(StringBuilder sql, SqlParameterSource params)  throws Exception, Throwable  {
 		return jdbcTemplate.query(sql.toString(), params, (rs, i) -> {
 		
 			TbMovimentacaoDTO tbMovimentacaoDTO = new TbMovimentacaoDTO();
 
 			tbMovimentacaoDTO.setIdMovimentacao(rs.getInt("c.id_movimentacao"));
-			tbMovimentacaoDTO.setTbMovimentacaoCredito(rs.getBigDecimal("c.tb_movimentacao_credito"));
-			tbMovimentacaoDTO.setTbMovimentacaoData(rs.getDate("c.tb_movimentacao_data"));
-			tbMovimentacaoDTO.setTbMovimentacaoDebito(rs.getBigDecimal("c.tb_movimentacao_debito"));
+			tbMovimentacaoDTO.setMovimentacaoCredito(rs.getBigDecimal("c.tb_movimentacao_credito"));
+			data = rs.getTimestamp("c.tb_movimentacao_data");
+			formato = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+			tbMovimentacaoDTO.setMovimentacaoData(formato.format(data));
+			tbMovimentacaoDTO.setMovimentacaoDebito(rs.getBigDecimal("c.tb_movimentacao_debito"));
+			tbMovimentacaoDTO.setMovimentacaoIdConta(rs.getInt("i.id_conta"));
 			tbMovimentacaoDTO.setContaDigito(rs.getString("i.tb_conta_digito"));
 			tbMovimentacaoDTO.setContaNumero(rs.getInt("i.tb_conta_numero"));
 	
@@ -120,9 +137,10 @@ public class TbMovimentacaoDAO implements ItbMovimentacaoDAO {
 	
 	
 	@Override
-	public List<TbMovimentacaoDTO> getAllTbMovimentacaos() {
+	public List<TbMovimentacaoDTO> getAllTbMovimentacaos()  throws Exception, Throwable  {
+		
 		StringBuilder sql = new StringBuilder(sqlSelectPrincipal)		
-		.append("  ON i.id_conta = c.tb_conta_id_conta order by c.tb_movimentacao_data ");
+		.append("  ON i.id_conta = c.tb_conta_id_conta order by i.tb_conta_numero, i.tb_conta_digito, c.tb_movimentacao_data ");
 		
 		return devolveListaObjetos(sql, null);
 	}
@@ -130,16 +148,18 @@ public class TbMovimentacaoDAO implements ItbMovimentacaoDAO {
 
 	
 	
-	private TbMovimentacaoDTO devolveObjeto(StringBuilder sql, SqlParameterSource params) {
+	private TbMovimentacaoDTO devolveObjeto(StringBuilder sql, SqlParameterSource params)  throws Exception, Throwable  {
 		return jdbcTemplate.queryForObject(sql.toString(), params, (rs, i) -> {
-			
-			
+						
 			TbMovimentacaoDTO tbMovimentacaoDTO = new TbMovimentacaoDTO();
 
 			tbMovimentacaoDTO.setIdMovimentacao(rs.getInt("c.id_movimentacao"));
-			tbMovimentacaoDTO.setTbMovimentacaoCredito(rs.getBigDecimal("c.tb_movimentacao_credito"));
-			tbMovimentacaoDTO.setTbMovimentacaoData(rs.getDate("c.tb_movimentacao_data"));
-			tbMovimentacaoDTO.setTbMovimentacaoDebito(rs.getBigDecimal("c.tb_movimentacao_debito"));
+			tbMovimentacaoDTO.setMovimentacaoCredito(rs.getBigDecimal("c.tb_movimentacao_credito"));
+			data = rs.getTimestamp("c.tb_movimentacao_data");
+			formato = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+			tbMovimentacaoDTO.setMovimentacaoData(formato.format(data));
+			tbMovimentacaoDTO.setMovimentacaoDebito(rs.getBigDecimal("c.tb_movimentacao_debito"));
+			tbMovimentacaoDTO.setMovimentacaoIdConta(rs.getInt("c.id_conta"));
 			tbMovimentacaoDTO.setContaDigito(rs.getString("i.tb_conta_digito"));
 			tbMovimentacaoDTO.setContaNumero(rs.getInt("i.tb_conta_numero"));
 			
@@ -150,11 +170,12 @@ public class TbMovimentacaoDAO implements ItbMovimentacaoDAO {
 	}
 		
 	 
-	public TbMovimentacaoDTO getTbMovimentacaoById(int id) {
+	public TbMovimentacaoDTO getTbMovimentacaoById(int id)  throws Exception, Throwable  {
 		
 		StringBuilder sql = new StringBuilder(sqlSelectPrincipal);		
 		sql.append("  ON i.id_conta = c.tb_conta_id_conta  ")
 		.append(" WHERE c.id_movimentacao = :idMovimentacao ");
+		
 		SqlParameterSource params = new MapSqlParameterSource().addValue("idMovimentacao", id);
 		
 		return devolveObjeto(sql, params);
@@ -166,7 +187,7 @@ public class TbMovimentacaoDAO implements ItbMovimentacaoDAO {
 
 
 	@Override
-	public void deleteTbMovimentacao(int id) {
+	public void deleteTbMovimentacao(int id)  throws Exception, Throwable  {
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -177,8 +198,7 @@ public class TbMovimentacaoDAO implements ItbMovimentacaoDAO {
 	     SqlParameterSource params = new MapSqlParameterSource().addValue("idMovimentacao", id);
 
 			try{
-		    	 jdbcTemplate.update(sql.toString(), params);
-		         
+		    	 jdbcTemplate.update(sql.toString(), params);		         
 		     }catch (Exception e){
 		    	 System.out.println("-----------------ERRO NO DELETE DO MOVIMENTO-------------------------------" + e.toString());
 		        

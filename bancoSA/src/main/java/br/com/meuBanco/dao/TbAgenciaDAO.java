@@ -10,11 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.meuBanco.dao.impl.ItbAgenciaDAO;
-import br.com.meuBanco.entity.TbAgencia;
 import br.com.meuBanco.entity.dto.TbAgenciaDTO;
-
-
-
 
 
 @Transactional
@@ -28,7 +24,7 @@ public class TbAgenciaDAO implements ItbAgenciaDAO {
 	
 	
 	@Override
-	public void addTbAgencia(TbAgencia tbAgencia) {
+	public void addTbAgenciaDTO(TbAgenciaDTO tbAgenciaDTO)  throws Exception, Throwable  {
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -41,19 +37,23 @@ public class TbAgenciaDAO implements ItbAgenciaDAO {
 		sql.append( "  values (:idAgencia, :tbAgenciaCodigo, :tbAgenciaDigito, :tbBanco)");
 		
 		SqlParameterSource params = new MapSqlParameterSource()
-				.addValue("idAgencia", tbAgencia.getIdAgencia())
-				.addValue("tbAgenciaCodigo", tbAgencia.getTbAgenciaCodigo())
-				.addValue("tbAgenciaDigito", tbAgencia.getTbAgenciaDigito())
-				.addValue("tbBanco", tbAgencia.getTbBanco().getIdBanco());
+				.addValue("idAgencia", tbAgenciaDTO.getIdAgencia())
+				.addValue("tbAgenciaCodigo", tbAgenciaDTO.getAgenciaCodigo())
+				.addValue("tbAgenciaDigito", tbAgenciaDTO.getAgenciaDigito())
+				.addValue("tbBanco", tbAgenciaDTO.getIdbancoAgencia());
 		
-		jdbcTemplate.update(sql.toString(), params);
-								
+		try{
+	    	 jdbcTemplate.update(sql.toString(), params);	         
+	     }catch (Exception e){
+	    	 System.out.println("-----------------ERRO NO INSERT DA AGENCIA-------------------------------" + e.toString());
+	        
+	     }
 	}
 	
 	
 
 	@Override
-	public void updateTbAgencia(TbAgencia tbAgencia) {
+	public void updateTbAgenciaDTO(TbAgenciaDTO tbAgenciaDTO)  throws Exception, Throwable  {
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -65,12 +65,18 @@ public class TbAgenciaDAO implements ItbAgenciaDAO {
 		sql.append(" WHERE id_agencia = :idAgencia");
 		
 		SqlParameterSource params = new MapSqlParameterSource()
-				.addValue("tbAgenciaCodigo", tbAgencia.getTbAgenciaCodigo())
-				.addValue("tbAgenciaDigito", tbAgencia.getTbAgenciaCodigo())
-				.addValue("tbBanco", tbAgencia.getTbBanco().getIdBanco())
-				.addValue("idAgencia", tbAgencia.getIdAgencia());
+				.addValue("tbAgenciaCodigo", tbAgenciaDTO.getAgenciaCodigo())
+				.addValue("tbAgenciaDigito", tbAgenciaDTO.getAgenciaDigito())
+				.addValue("tbBanco", tbAgenciaDTO.getIdbancoAgencia())
+				.addValue("idAgencia", tbAgenciaDTO.getIdAgencia());
 		
-		jdbcTemplate.update(sql.toString(), params);
+		try{
+	    	 jdbcTemplate.update(sql.toString(), params);
+	         
+	     }catch (Exception e){
+	    	 System.out.println("-----------------ERRO NO UPDATE DA AGENCIA-------------------------------" + e.toString());
+	        
+	     }	
 	}
 
 	
@@ -80,12 +86,13 @@ public class TbAgenciaDAO implements ItbAgenciaDAO {
 			.append("  c.id_agencia")
 			.append("  ,c.tb_agencia_codigo")
 			.append("  ,c.tb_agencia_digito")
+			.append("  ,i.id_banco")
 			.append("  ,i.tb_banco_codigo")
 			.append("  ,i.tb_banco_nome")
-			.append("  FROM tb_agencia c INNER JOIN tb_banco i");
+			.append("  FROM tb_agencia c INNER JOIN tb_banco i ON i.id_banco = c.tb_banco_id_banco");
 			
 		
-	private List<TbAgenciaDTO> devolveListaObjetos(StringBuilder sql, SqlParameterSource params) {
+	private List<TbAgenciaDTO> devolveListaObjetos(StringBuilder sql, SqlParameterSource params)  throws Exception, Throwable  {
 		return jdbcTemplate.query(sql.toString(), params, (rs, i) -> {
 		
 			TbAgenciaDTO tbAgenciaDTO = new TbAgenciaDTO();
@@ -93,6 +100,7 @@ public class TbAgenciaDAO implements ItbAgenciaDAO {
 			tbAgenciaDTO.setIdAgencia(rs.getInt("c.id_agencia"));
 			tbAgenciaDTO.setAgenciaCodigo(rs.getInt("c.tb_agencia_codigo"));
 			tbAgenciaDTO.setAgenciaDigito(rs.getString("c.tb_agencia_digito"));
+			tbAgenciaDTO.setIdbancoAgencia(rs.getInt("i.id_banco"));
 			tbAgenciaDTO.setBancoCodigo(rs.getInt("i.tb_banco_codigo"));
 			tbAgenciaDTO.setBancoNome(rs.getString("i.tb_banco_nome"));
 	
@@ -103,9 +111,9 @@ public class TbAgenciaDAO implements ItbAgenciaDAO {
 	
 	
 	@Override
-	public List<TbAgenciaDTO> getAllTbAgencias() {
+	public List<TbAgenciaDTO> getAllTbAgencias()   throws Exception, Throwable {
 		StringBuilder sql = new StringBuilder(sqlSelectPrincipal)		
-		.append("  ON i.id_banco = c.tb_banco_id_banco order by c.tb_agencia_codigo ");
+		.append(" order by i.tb_banco_codigo, c.tb_agencia_codigo ");
 		
 		return devolveListaObjetos(sql, null);
 	}
@@ -113,7 +121,7 @@ public class TbAgenciaDAO implements ItbAgenciaDAO {
 
 	
 	
-	private TbAgenciaDTO devolveObjeto(StringBuilder sql, SqlParameterSource params) {
+	private TbAgenciaDTO devolveObjeto(StringBuilder sql, SqlParameterSource params)  throws Exception, Throwable  {
 		return jdbcTemplate.queryForObject(sql.toString(), params, (rs, i) -> {
 			
 			
@@ -122,6 +130,7 @@ public class TbAgenciaDAO implements ItbAgenciaDAO {
 			tbAgenciaDTO.setIdAgencia(rs.getInt("c.id_agencia"));
 			tbAgenciaDTO.setAgenciaCodigo(rs.getInt("c.tb_agencia_codigo"));
 			tbAgenciaDTO.setAgenciaDigito(rs.getString("c.tb_agencia_digito"));
+			tbAgenciaDTO.setIdbancoAgencia(rs.getInt("i.id_banco"));
 			tbAgenciaDTO.setBancoCodigo(rs.getInt("i.tb_banco_codigo"));
 			tbAgenciaDTO.setBancoNome(rs.getString("i.tb_banco_nome"));
 			
@@ -132,13 +141,13 @@ public class TbAgenciaDAO implements ItbAgenciaDAO {
 	}
 		
 	 
-	public TbAgenciaDTO getTbAgenciaById(int id) {
+	public TbAgenciaDTO getTbAgenciaById(int id)   throws Exception, Throwable {
 		
 		StringBuilder sql = new StringBuilder(sqlSelectPrincipal);		
-		sql.append("  ON i.id_banco = c.tb_banco_id_banco  ")
-		.append(" WHERE c.id_agencia = :idAgencia ");
+		sql.append(" WHERE c.id_agencia = :idAgencia ");
 		SqlParameterSource params = new MapSqlParameterSource().addValue("idAgencia", id);
 		
+		System.out.println("-----------------RETORNO AGENCIA-------------------------------" + params);
 		return devolveObjeto(sql, params);
 		
 	}
@@ -148,7 +157,7 @@ public class TbAgenciaDAO implements ItbAgenciaDAO {
 
 
 	@Override
-	public void deleteTbAgencia(int id) {
+	public void deleteTbAgencia(int id)   throws Exception, Throwable {
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -158,7 +167,12 @@ public class TbAgenciaDAO implements ItbAgenciaDAO {
 
 	     SqlParameterSource params = new MapSqlParameterSource().addValue("idAgencia", id);
 
-	     jdbcTemplate.update(sql.toString(), params);
+			try{
+		    	 jdbcTemplate.update(sql.toString(), params);		         
+		     }catch (Exception e){
+		    	 System.out.println("-----------------ERRO NO DELETE DA AGENCIA-------------------------------" + e.toString());
+		        
+		     }
 	}
 
 

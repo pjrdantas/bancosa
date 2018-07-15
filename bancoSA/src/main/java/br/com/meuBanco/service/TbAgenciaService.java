@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.meuBanco.dao.impl.ItbAgenciaDAO;
-import br.com.meuBanco.entity.TbAgencia;
 import br.com.meuBanco.entity.dto.TbAgenciaDTO;
 import br.com.meuBanco.service.impl.ITbAgenciaService;
 
@@ -25,28 +24,28 @@ public class TbAgenciaService  implements ITbAgenciaService {
 
 
 	@Override
-	public void addTbAgencia(TbAgencia tbAgencia) {
-		tbAgenciaDAO.addTbAgencia(tbAgencia);
+	public void addTbAgenciaDTO(TbAgenciaDTO tbAgenciaDTO)   throws Exception, Throwable {
+		tbAgenciaDAO.addTbAgenciaDTO(tbAgenciaDTO);
 		
 	}
 	
 
 	 
 	@Override
-	public void updateTbAgencia(TbAgencia tbAgencia) {
-		tbAgenciaDAO.updateTbAgencia(tbAgencia);
+	public void updateTbAgenciaDTO(TbAgenciaDTO tbAgenciaDTO)  throws Exception, Throwable {
+		tbAgenciaDAO.updateTbAgenciaDTO(tbAgenciaDTO);
 	}
 	
 
 	@Override
-	public List<TbAgenciaDTO> consultar(){
+	public List<TbAgenciaDTO> consultar()   throws Exception, Throwable {
 		return tbAgenciaDAO.getAllTbAgencias();
 	}
 
 	
 	
 	@Override
-	public TbAgenciaDTO getTbAgenciaById(int id) {
+	public TbAgenciaDTO getTbAgenciaById(int id)  throws Exception, Throwable {
 		TbAgenciaDTO obj = tbAgenciaDAO.getTbAgenciaById(id);
 		return obj;
 	}	
@@ -54,7 +53,7 @@ public class TbAgenciaService  implements ITbAgenciaService {
 	 
 	
 	@Override
-	public void deleteTbAgencia(int id) {
+	public void deleteTbAgencia(int id)  throws Exception, Throwable {
 		tbAgenciaDAO.deleteTbAgencia(id);
 	}
 

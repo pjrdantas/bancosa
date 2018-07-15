@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.meuBanco.dao.impl.ItbContaDAO;
-import br.com.meuBanco.entity.TbConta;
 import br.com.meuBanco.entity.dto.TbContaDTO;
 import br.com.meuBanco.service.impl.ITbContaService;
 
@@ -25,28 +24,28 @@ public class TbContaService  implements ITbContaService {
 
 
 	@Override
-	public void addTbConta(TbConta tbConta) {
-		tbContaDAO.addTbConta(tbConta);
+	public void addTbContaDTO(TbContaDTO tbContaDTO)  throws Exception, Throwable {
+		tbContaDAO.addTbContaDTO(tbContaDTO);
 		
 	}
 	
 
 	 
 	@Override
-	public void updateTbConta(TbConta tbConta) {
-		tbContaDAO.updateTbConta(tbConta);
+	public void updateTbContaDTO(TbContaDTO tbContaDTO)  throws Exception, Throwable {
+		tbContaDAO.updateTbContaDTO(tbContaDTO);
 	}
 	
 
 	@Override
-	public List<TbContaDTO> consultar(){
+	public List<TbContaDTO> consultar()  throws Exception, Throwable {
 		return tbContaDAO.getAllTbContas();
 	}
 
 	
 	
 	@Override
-	public TbContaDTO getTbContaById(int id) {
+	public TbContaDTO getTbContaById(int id)  throws Exception, Throwable {
 		TbContaDTO obj = tbContaDAO.getTbContaById(id);
 		return obj;
 	}	
@@ -54,7 +53,7 @@ public class TbContaService  implements ITbContaService {
 	 
 	
 	@Override
-	public void deleteTbConta(int id) {
+	public void deleteTbConta(int id)  throws Exception, Throwable {
 		tbContaDAO.deleteTbConta(id);
 	}
 

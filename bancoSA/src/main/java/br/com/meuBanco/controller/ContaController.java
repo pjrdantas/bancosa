@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.meuBanco.entity.TbConta;
 import br.com.meuBanco.entity.dto.TbContaDTO;
 import br.com.meuBanco.response.ResponseModel;
 import br.com.meuBanco.service.impl.ITbContaService;
@@ -34,16 +33,18 @@ public class ContaController {
 
 	/**
 	 * 
-	 * @param tbConta
+	 * @param tbContaDTO
 	 * @return
+	 * @throws Exception
+	 * @throws Throwable
 	 */
 	@RequestMapping(value="/conta", method = RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody ResponseModel salvar(@RequestBody TbConta tbConta){
+	public @ResponseBody ResponseModel salvar(@RequestBody TbContaDTO tbContaDTO)  throws Exception, Throwable { 
       
-	System.out.println("-------------------------------------------------------------------"+tbConta.getIdConta()+" ");
+	System.out.println("-------------------------------------------------------------------"+tbContaDTO.getIdConta()+" "+tbContaDTO.getContaNumero()+" "+tbContaDTO.getContaDigito()+" "+tbContaDTO.getContaTipo()+" "+tbContaDTO.getContaIdAgencia()+" "+tbContaDTO.getContaIdCliente());
 	
 		try {			 
-			this.contaService.addTbConta(tbConta); 
+			this.contaService.addTbContaDTO(tbContaDTO); 
 			return new ResponseModel(1,"Registro salvo com sucesso!"); 
 		}catch(Exception e) {
 			return new ResponseModel(0,e.getMessage());			
@@ -62,10 +63,13 @@ public class ContaController {
 	 * @throws Throwable
 	 */
 	@RequestMapping(value="/conta", method = RequestMethod.PUT, consumes=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody ResponseModel atualizar(@RequestBody TbConta tbConta)  throws Exception, Throwable {
+	public @ResponseBody ResponseModel atualizar(@RequestBody TbContaDTO tbContaDTO)  throws Exception, Throwable {
 
+		System.out.println("-------------------------------------------------------------------"+tbContaDTO.getIdConta()+" "+tbContaDTO.getContaNumero()+" "+tbContaDTO.getContaDigito()+" "+tbContaDTO.getContaTipo()+" "+tbContaDTO.getContaIdAgencia()+" "+tbContaDTO.getContaIdCliente());
+
+		
 		try {			 
-			this.contaService.updateTbConta(tbConta);		
+			this.contaService.updateTbContaDTO(tbContaDTO);		
 			return new ResponseModel(1,"Registro atualizado com sucesso!"); 
 		}catch(Exception e) { 
 			return new ResponseModel(0,e.getMessage());
@@ -78,9 +82,11 @@ public class ContaController {
 	/**
 	 * 
 	 * @return
+	 * @throws Exception
+	 * @throws Throwable
 	 */
 	@RequestMapping(value="/conta", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody List<TbContaDTO> consultar(){
+	public @ResponseBody List<TbContaDTO> consultar()  throws Exception, Throwable { 
 				
 		return this.contaService.consultar();			
 	}
@@ -90,9 +96,11 @@ public class ContaController {
 	 * 
 	 * @param idConta
 	 * @return
+	 * @throws Exception
+	 * @throws Throwable
 	 */
 	@RequestMapping(value="/conta/{idConta}", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody TbContaDTO buscar(@PathVariable("idConta") String idConta){
+	public @ResponseBody TbContaDTO buscar(@PathVariable("idConta") String idConta)  throws Exception, Throwable { 
 		
 		int id = Integer.parseInt(idConta);
 		return this.contaService.getTbContaById(id);
@@ -105,9 +113,11 @@ public class ContaController {
 	 * 
 	 * @param idConta
 	 * @return
+	 * @throws Exception
+	 * @throws Throwable
 	 */
 	@RequestMapping(value="/conta/{idConta}", method = RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody ResponseModel excluir(@PathVariable("idConta") String idConta){
+	public @ResponseBody ResponseModel excluir(@PathVariable("idConta") String idConta)  throws Exception, Throwable { 
 		
 		int id = Integer.parseInt(idConta);
 		 

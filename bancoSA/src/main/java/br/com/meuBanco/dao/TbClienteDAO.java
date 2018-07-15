@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.meuBanco.dao.impl.ItbClienteDAO;
-import br.com.meuBanco.entity.TbCliente;
 import br.com.meuBanco.entity.dto.TbClienteDTO;
 
 
@@ -28,7 +27,7 @@ public class TbClienteDAO implements ItbClienteDAO {
 	
 	
 	@Override
-	public void addTbCliente(TbCliente tbCliente) {
+	public void addTbClienteDTO(TbClienteDTO tbClienteDTO)   throws Exception, Throwable {
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -41,10 +40,10 @@ public class TbClienteDAO implements ItbClienteDAO {
 		sql.append( "  values (:idCliente, :tbClienteNome, :tbClienteSenha, :tbAgencia)");
 		
 		SqlParameterSource params = new MapSqlParameterSource()
-				.addValue("idCliente", tbCliente.getIdCliente())
-				.addValue("tbClienteNome", tbCliente.getTbClienteNome())
-				.addValue("tbClienteSenha", tbCliente.getTbClienteSenha())
-				.addValue("tbAgencia", tbCliente.getTbAgencia().getIdAgencia());
+				.addValue("idCliente", tbClienteDTO.getIdCliente())
+				.addValue("tbClienteNome", tbClienteDTO.getClienteNome())
+				.addValue("tbClienteSenha", tbClienteDTO.getClienteSenha())
+				.addValue("tbAgencia", tbClienteDTO.getClienteIAgencia());
 		
 		jdbcTemplate.update(sql.toString(), params);
 								
@@ -53,7 +52,7 @@ public class TbClienteDAO implements ItbClienteDAO {
 	
 
 	@Override
-	public void updateTbCliente(TbCliente tbCliente) {
+	public void updateTbClienteDTO(TbClienteDTO tbClienteDTO) throws Exception, Throwable {
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -66,10 +65,10 @@ public class TbClienteDAO implements ItbClienteDAO {
 		
 		SqlParameterSource params = new MapSqlParameterSource()
 				
-				.addValue("tbClienteNome", tbCliente.getTbClienteNome())
-				.addValue("tbClienteSenha", tbCliente.getTbClienteSenha())
-				.addValue("tbAgencia", tbCliente.getTbAgencia().getIdAgencia())
-				.addValue("idCliente", tbCliente.getIdCliente());
+				.addValue("tbClienteNome", tbClienteDTO.getClienteNome())
+				.addValue("tbClienteSenha", tbClienteDTO.getClienteSenha())
+				.addValue("tbAgencia", tbClienteDTO.getClienteIAgencia())
+				.addValue("idCliente", tbClienteDTO.getIdCliente());
 		
 		try{
 	    	 jdbcTemplate.update(sql.toString(), params);
@@ -87,12 +86,13 @@ public class TbClienteDAO implements ItbClienteDAO {
 			.append("  c.id_cliente")
 			.append("  ,c.tb_cliente_nome")
 			.append("  ,c.tb_cliente_senha")
+			.append("  ,i.id_agencia")
 			.append("  ,i.tb_agencia_codigo")
 			.append("  ,i.tb_agencia_digito")
 			.append("  FROM tb_cliente c INNER JOIN tb_agencia i ");
 			
 		
-	private List<TbClienteDTO> devolveListaObjetos(StringBuilder sql, SqlParameterSource params) {
+	private List<TbClienteDTO> devolveListaObjetos(StringBuilder sql, SqlParameterSource params)   throws Exception, Throwable {
 		return jdbcTemplate.query(sql.toString(), params, (rs, i) -> {
 		
 			TbClienteDTO tbClienteDTO = new TbClienteDTO();
@@ -100,6 +100,7 @@ public class TbClienteDAO implements ItbClienteDAO {
 			tbClienteDTO.setIdCliente(rs.getInt("c.id_cliente"));
 			tbClienteDTO.setClienteNome(rs.getString("c.tb_cliente_nome"));
 			tbClienteDTO.setClienteSenha(rs.getInt("c.tb_cliente_senha"));
+			tbClienteDTO.setClienteIAgencia(rs.getInt("i.id_agencia"));
 			tbClienteDTO.setAgenciaCodigo(rs.getInt("i.tb_agencia_codigo"));
 			tbClienteDTO.setAgenciaDigito(rs.getString("i.tb_agencia_digito"));
 	
@@ -110,7 +111,7 @@ public class TbClienteDAO implements ItbClienteDAO {
 	
 	
 	@Override
-	public List<TbClienteDTO> getAllTbClientes() {
+	public List<TbClienteDTO> getAllTbClientes()   throws Exception, Throwable {
 		StringBuilder sql = new StringBuilder(sqlSelectPrincipal)		
 		.append("  ON i.id_agencia = c.tb_agencia_id_agencia order by c.tb_cliente_nome ");
 		
@@ -120,7 +121,7 @@ public class TbClienteDAO implements ItbClienteDAO {
 
 	
 	
-	private TbClienteDTO devolveObjeto(StringBuilder sql, SqlParameterSource params) {
+	private TbClienteDTO devolveObjeto(StringBuilder sql, SqlParameterSource params)   throws Exception, Throwable {
 		return jdbcTemplate.queryForObject(sql.toString(), params, (rs, i) -> {
 			
 			
@@ -129,6 +130,7 @@ public class TbClienteDAO implements ItbClienteDAO {
 			tbClienteDTO.setIdCliente(rs.getInt("c.id_cliente"));
 			tbClienteDTO.setClienteNome(rs.getString("c.tb_cliente_nome"));
 			tbClienteDTO.setClienteSenha(rs.getInt("c.tb_cliente_senha"));
+			tbClienteDTO.setClienteIAgencia(rs.getInt("i.id_agencia"));
 			tbClienteDTO.setAgenciaCodigo(rs.getInt("i.tb_agencia_codigo"));
 			tbClienteDTO.setAgenciaDigito(rs.getString("i.tb_agencia_digito"));
 						
@@ -138,7 +140,7 @@ public class TbClienteDAO implements ItbClienteDAO {
 	}
 		
 	 
-	public TbClienteDTO getTbClienteById(int id) {
+	public TbClienteDTO getTbClienteById(int id)   throws Exception, Throwable {
 		
 		StringBuilder sql = new StringBuilder(sqlSelectPrincipal);		
 		sql.append("  ON i.id_agencia = c.tb_agencia_id_agencia  ")
@@ -154,7 +156,7 @@ public class TbClienteDAO implements ItbClienteDAO {
 
 
 	@Override
-	public void deleteTbCliente(int id) {
+	public void deleteTbCliente(int id)   throws Exception, Throwable {
 		
 		StringBuilder sql = new StringBuilder();
 		
