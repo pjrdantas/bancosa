@@ -17,6 +17,5 @@ public interface ItbNotaDAO {
     void deleteTbNota(int id)  throws Exception, Throwable;
     
     
-   
 }
  

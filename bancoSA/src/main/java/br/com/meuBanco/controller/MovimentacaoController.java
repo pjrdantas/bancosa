@@ -30,21 +30,25 @@ public class MovimentacaoController {
 	@Autowired
 	private ITbMovimentacaoService movimentacaoService;
 
-
+    String mensagem;
 	/**
 	 * 
 	 * @param tbMovimentacaoDTO
+	 * @return 
 	 * @return
 	 * @throws Exception
 	 * @throws Throwable
 	 */
 	@RequestMapping(value="/movimentacao", method = RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody ResponseModel salvar(@RequestBody TbMovimentacaoDTO tbMovimentacaoDTO)  throws Exception, Throwable {
+	public @ResponseBody  ResponseModel salvar(@RequestBody TbMovimentacaoDTO tbMovimentacaoDTO)  throws Exception, Throwable {
       
-	
+		mensagem = "Registro salvo com sucesso!";
+		
+		
+		
 		try {			 
-			this.movimentacaoService.addTbMovimentacaoDTO(tbMovimentacaoDTO); 
-			return new ResponseModel(1,"Registro salvo com sucesso!"); 
+			this.movimentacaoService.addTbMovimentacaoDTO(tbMovimentacaoDTO); 			
+			return new ResponseModel(1,mensagem); 
 		}catch(Exception e) {
 			return new ResponseModel(0,e.getMessage());			
 		}
@@ -54,30 +58,7 @@ public class MovimentacaoController {
 	
  
 	
-	/**
-	 * 
-	 * @param tbMovimentacao
-	 * @return
-	 * @throws Exception
-	 * @throws Throwable
-	 */
-	@RequestMapping(value="/movimentacao", method = RequestMethod.PUT, consumes=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody ResponseModel atualizar(@RequestBody TbMovimentacaoDTO tbMovimentacaoDTO)  throws Exception, Throwable {
 
-		System.out.println("-------------------------------------------------------------------"
-				+tbMovimentacaoDTO.getIdMovimentacao()+" "+tbMovimentacaoDTO.getMovimentacaoCredito()
-				+" "+tbMovimentacaoDTO.getMovimentacaoData()+" "+tbMovimentacaoDTO.getMovimentacaoDebito()
-				+" "+tbMovimentacaoDTO.getMovimentacaoIdConta());
-				
-		try {			 
-			this.movimentacaoService.updateTbMovimentacaoDTO(tbMovimentacaoDTO);		
-			return new ResponseModel(1,"Registro atualizado com sucesso!"); 
-		}catch(Exception e) { 
-			return new ResponseModel(0,e.getMessage());
-		}
-		
-	}
-	
 
 	
 	/**

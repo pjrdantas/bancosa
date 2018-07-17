@@ -11,9 +11,10 @@ public interface ItbMovimentacaoDAO {
 	
     
     void addTbMovimentacaoDTO(TbMovimentacaoDTO tbMovimentacaoDTO)  throws Exception, Throwable ;
-    void updateTbMovimentacaoDTO(TbMovimentacaoDTO tbMovimentacaoDTO)  throws Exception, Throwable ;
     List<TbMovimentacaoDTO> getAllTbMovimentacaos()  throws Exception, Throwable ;
     TbMovimentacaoDTO getTbMovimentacaoById(int id)  throws Exception, Throwable ;
+    TbMovimentacaoDTO getTbMovimentacaoByConta(int idConta)  throws Exception, Throwable;
+    boolean existeMovimentoPorConta(int idConta)  throws Exception, Throwable;
     void deleteTbMovimentacao(int id)  throws Exception, Throwable ;
     
     

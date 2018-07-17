@@ -35,6 +35,9 @@ public class TbMovimentacao {
 
 	@Column(name="tb_movimentacao_debito", nullable=true, precision=10, scale=2)
 	private BigDecimal tbMovimentacaoDebito;
+	
+	@Column(name="tb_movimentacao_saldo", nullable=true, precision=10, scale=2)
+	private BigDecimal tbMovimentacaoSaldo;
 
 	//bi-directional many-to-one association to TbConta
 	@ManyToOne
@@ -45,7 +48,7 @@ public class TbMovimentacao {
 	}
 
 	public int getIdMovimentacao() {
-		return this.idMovimentacao;
+		return idMovimentacao;
 	}
 
 	public void setIdMovimentacao(int idMovimentacao) {
@@ -53,15 +56,15 @@ public class TbMovimentacao {
 	}
 
 	public BigDecimal getTbMovimentacaoCredito() {
-		return this.tbMovimentacaoCredito;
+		return tbMovimentacaoCredito;
 	}
 
-	public void setTbMovimentacaoCredito(BigDecimal tbMovimentaCredito) {
-		this.tbMovimentacaoCredito = tbMovimentaCredito;
+	public void setTbMovimentacaoCredito(BigDecimal tbMovimentacaoCredito) {
+		this.tbMovimentacaoCredito = tbMovimentacaoCredito;
 	}
 
 	public Date getTbMovimentacaoData() {
-		return this.tbMovimentacaoData;
+		return tbMovimentacaoData;
 	}
 
 	public void setTbMovimentacaoData(Date tbMovimentacaoData) {
@@ -69,19 +72,28 @@ public class TbMovimentacao {
 	}
 
 	public BigDecimal getTbMovimentacaoDebito() {
-		return this.tbMovimentacaoDebito;
+		return tbMovimentacaoDebito;
 	}
 
 	public void setTbMovimentacaoDebito(BigDecimal tbMovimentacaoDebito) {
 		this.tbMovimentacaoDebito = tbMovimentacaoDebito;
 	}
 
+	public BigDecimal getTbMovimentacaoSaldo() {
+		return tbMovimentacaoSaldo;
+	}
+
+	public void setTbMovimentacaoSaldo(BigDecimal tbMovimentacaoSaldo) {
+		this.tbMovimentacaoSaldo = tbMovimentacaoSaldo;
+	}
+
 	public TbConta getTbConta() {
-		return this.tbConta;
+		return tbConta;
 	}
 
 	public void setTbConta(TbConta tbConta) {
 		this.tbConta = tbConta;
 	}
+
 
 }
