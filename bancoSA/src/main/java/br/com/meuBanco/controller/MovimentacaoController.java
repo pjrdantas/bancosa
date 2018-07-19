@@ -30,7 +30,10 @@ public class MovimentacaoController {
 	@Autowired
 	private ITbMovimentacaoService movimentacaoService;
 
-    String mensagem;
+	int codigo = 1;
+    String mensagem = "saldo salvo com sucesso!";
+    
+    
 	/**
 	 * 
 	 * @param tbMovimentacaoDTO
@@ -41,18 +44,13 @@ public class MovimentacaoController {
 	 */
 	@RequestMapping(value="/movimentacao", method = RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody  ResponseModel salvar(@RequestBody TbMovimentacaoDTO tbMovimentacaoDTO)  throws Exception, Throwable {
-      
-		mensagem = "Registro salvo com sucesso!";
-		
-		
-		
-		try {			 
-			this.movimentacaoService.addTbMovimentacaoDTO(tbMovimentacaoDTO); 			
-			return new ResponseModel(1,mensagem); 
+      		
+		try {							
+			this.movimentacaoService.addTbMovimentacaoDTO(tbMovimentacaoDTO);									
+			return new ResponseModel(codigo,mensagem); 
 		}catch(Exception e) {
 			return new ResponseModel(0,e.getMessage());			
-		}
-		
+		}		
 	}
 
 	

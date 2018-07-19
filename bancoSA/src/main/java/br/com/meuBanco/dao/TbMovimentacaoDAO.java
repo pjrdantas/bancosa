@@ -30,7 +30,7 @@ public class TbMovimentacaoDAO implements ItbMovimentacaoDAO {
 	@Override
 	public void addTbMovimentacaoDTO(TbMovimentacaoDTO tbMovimentacaoDTO)  throws Exception, Throwable  {
 	
-
+		System.out.println("-----------------entrei aqui");
 		
 		StringBuilder sql = new StringBuilder();
 		sql.append(	"  INSERT INTO ");

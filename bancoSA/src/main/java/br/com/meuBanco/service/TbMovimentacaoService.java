@@ -22,164 +22,88 @@ public class TbMovimentacaoService  implements ITbMovimentacaoService {
 	
 	@Autowired
 	private ItbMovimentacaoDAO tbMovimentacaoDAO;
-
 	private TbMovimentacaoDTO obj;
-
-	private boolean cont;
 	
-	private String mensagem;
-	
-	BigDecimal movimentacaoCredito;
-	BigDecimal movimentacaoDebito;
-	BigDecimal movimentacaoSaldo;
+	boolean cont;	
+	String mensagem;
 	int movimentacaoIdConta;
+	String teste;
 
 	@Override
 	public void addTbMovimentacaoDTO(TbMovimentacaoDTO tbMovimentacaoDTO)   throws Exception, Throwable {
 		
-	
-		int idConta = tbMovimentacaoDTO.getMovimentacaoIdConta();
+		mensagem = null;				
 		movimentacaoIdConta = tbMovimentacaoDTO.getIdMovimentacao();
-		movimentacaoCredito = tbMovimentacaoDTO.getMovimentacaoCredito();
-		movimentacaoDebito = tbMovimentacaoDTO.getMovimentacaoDebito();		
-		
-		
-		movimetaConta(idConta, movimentacaoCredito, movimentacaoDebito);
-		
-
-	}
-	
-	
-	
-	public void movimetaConta(int idConta, BigDecimal movimentacaoCredito, BigDecimal movimentacaoDebito ) throws Exception, Throwable {
-		
-		existeMovimentoPorConta(idConta);
-		
-		// SALDO EXISTE
-		if (cont == true) {			
-			System.out.println("-----------------SALDO EXISTE");			
-			System.out.println("-----------------CREDITO: "+movimentacaoCredito);
-			System.out.println("-----------------DEBITO : "+movimentacaoDebito);
-			movimentacaoSaldo = obj.getMovimentacaoSaldo();
-			System.out.println("-----------------SALDO  : "+movimentacaoSaldo);
+		BigDecimal movimentacaoCredito = tbMovimentacaoDTO.getMovimentacaoCredito();
+		BigDecimal movimentacaoDebito = tbMovimentacaoDTO.getMovimentacaoDebito();		
+		BigDecimal movimentacaoSaldo;				
+		// VERIFICA EXISTENCIA DE MOVIMENTO NA CONTA
+		existeMovimentoPorConta(tbMovimentacaoDTO.getMovimentacaoIdConta());						
+		// EXISTE MOVIMENTO
+		if (cont) {						
+			getTbMovimentacaoByConta(tbMovimentacaoDTO.getMovimentacaoIdConta());
+			movimentacaoSaldo = obj.getMovimentacaoSaldo();			
 			// É UMA MOVIMENTAÇÃO DE CREDITO
-			if (movimentacaoCredito != null ) {
-				System.out.println("-----------------É UMA MOVIMENTAÇÃO DE CREDITO");
-				movimentacaoSaldo = movimentacaoCredito.add(obj.getMovimentacaoSaldo());
-				
-			// É UMA MOVIMENTAÇÃO DE DÉBITO
-			} 
-			if (movimentacaoDebito != null ) {
-				System.out.println("-----------------É UMA MOVIMENTAÇÃO DE DÉBITO");
-				movimentacaoSaldo = movimentacaoDebito.subtract(obj.getMovimentacaoSaldo());
-			}
-		// SALDO NÃO EXITE
-		} else {
-			System.out.println("-----------------SALDO NÃO EXITE");
-			movimentacaoSaldo = BigDecimal.ZERO;
-		}
-		
-/**
- * 
- * 
- * 
- * 
- * 
- * 	int        idConta        = tbMovimentacaoDTO.getMovimentacaoIdConta();
-		int        idMovimentacao = tbMovimentacaoDTO.getIdMovimentacao();
-		
-		existeMovimentoPorConta(idConta);
-		
-		if (cont == false) {
-			System.out.println("-----------------NÃO EXISTE MOVIMENTO");
-		} else {
-			System.out.println("-----------------EXISTE MOVIMENTO");
-		}
-		
-		
- 		
-		getTbMovimentacaoByConta(idConta);		
-		
-		tbMovimentacaoDTO.setIdMovimentacao(idMovimentacao);
-				
-		if (tbMovimentacaoDTO.getMovimentacaoCredito() != null || tbMovimentacaoDTO.getMovimentacaoCredito() 
-) {
-			tbMovimentacaoDTO.setMovimentacaoSaldo(tbMovimentacaoDTO.getMovimentacaoCredito().add(obj.getMovimentacaoSaldo()));	
-		} else {		
-			tbMovimentacaoDTO.setMovimentacaoSaldo(obj.getMovimentacaoSaldo().subtract(tbMovimentacaoDTO.getMovimentacaoDebito()));
-		}		
-		
-		tbMovimentacaoDAO.addTbMovimentacaoDTO(tbMovimentacaoDTO);		
-		 
-	}
-	
-	
-	
-		@Override
-	public String testaSaldo(BigDecimal saldo, BigDecimal debito) throws Exception, Throwable {
-		
-		if (saldo.compareTo(debito) == 1){
-					
-			System.out.println("-----SALDO é maior");
-			mensagem = null;
-									
-		} else if(debito.compareTo(saldo) == 1){
-						
-			System.out.println("-----SALDO INSUFICIENTE PARA SAQUE");
-			mensagem = "-----SALDO INSUFICIENTE PARA SAQUE";
-		}
-				
-		return mensagem;
-		
-		
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-				if (tbMovimentacaoDTO.getMovimentacaoCredito() != null ) {
-				System.out.println("-----ENTREI NESTA MERDA CREDITO:"+tbMovimentacaoDTO.getMovimentacaoCredito());
-				tbMovimentacaoDTO.setMovimentacaoSaldo(tbMovimentacaoDTO.getMovimentacaoCredito().add(obj.getMovimentacaoSaldo()));	
+			if (  tbMovimentacaoDTO.getMovimentacaoDebito() == null  ) {										
+				tbMovimentacaoDTO.setMovimentacaoSaldo(movimentacaoCredito.add(obj.getMovimentacaoSaldo()));	
+				mensagem = null;				
+			} else {									
+				// VERIFICA SE SALDO MAIOR QUE DEBITO
+				testaSaldo(movimentacaoSaldo,movimentacaoDebito);												
+				// SALDO MAIOR QUE DEBITO
+				if (mensagem == null) {					
+					// VERFICA SE DEBITO É MULTIPLO DE 10
+					debitoMultiploDeDez(movimentacaoDebito);					
+					if(!teste.equals("0.0")) {
+						mensagem = "VALOR NÃO É POSSIVEL PARA SAQUE";
+					} else {
+						tbMovimentacaoDTO.setMovimentacaoSaldo(movimentacaoSaldo.subtract(tbMovimentacaoDTO.getMovimentacaoDebito()));
+					}					
+				// SALDO MENOR QUE DEBITO
+				} else {
+					System.out.println("-----------------MENSAGEM DIFERENTE DE null");								
+				}				
+			}				
+			movimentacaoIdConta = 0;
+			movimentacaoCredito = BigDecimal.ZERO;
+			movimentacaoDebito = BigDecimal.ZERO;
+			movimentacaoSaldo = BigDecimal.ZERO; 			 			
+			if (mensagem == null) {				
 				tbMovimentacaoDAO.addTbMovimentacaoDTO(tbMovimentacaoDTO);	
-			} 
-			
-			if (tbMovimentacaoDTO.getMovimentacaoDebito() != null ) {
-				System.out.println("-----ENTREI NESTA MERDA DEBITO :"+tbMovimentacaoDTO.getMovimentacaoDebito());				
-				tbMovimentacaoDTO.setMovimentacaoSaldo(obj.getMovimentacaoSaldo().subtract(tbMovimentacaoDTO.getMovimentacaoDebito()));
-				tbMovimentacaoDAO.addTbMovimentacaoDTO(tbMovimentacaoDTO);												
-			}
-				
-
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- * 
- */
-		
+			}			
+		} 			
 	}
 	
+	
+	
+	// TESTA SE TEM SALDO SUFICIENTE
+	public String testaSaldo(BigDecimal saldo, BigDecimal debito) throws Exception, Throwable {
+		mensagem = null;
+		if (saldo.compareTo(debito) == 1){					
+			mensagem = null;									
+		} else if (debito.compareTo(saldo) == 1){						
+			mensagem = "-----SALDO INSUFICIENTE PARA SAQUE";
+		}				
+		return mensagem;		
+	}
+
+		
+	// VERIFICA SE O SAQUE É MULTIPLO DE 10
+	public String debitoMultiploDeDez(BigDecimal debito) {
+		BigDecimal dez = new BigDecimal("10.0");
+		BigDecimal[] resultado = debito.divideAndRemainder(dez);
+		teste = resultado[1].toString();
+		return teste;		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+
 	
 
 	@Override
@@ -212,22 +136,13 @@ public class TbMovimentacaoService  implements ITbMovimentacaoService {
 
 
 	@Override
-	public boolean existeMovimentoPorConta(int idConta) throws Exception, Throwable {
-		
-		cont = tbMovimentacaoDAO.existeMovimentoPorConta(idConta);
-		
+	public boolean existeMovimentoPorConta(int idConta) throws Exception, Throwable {		
+		cont = tbMovimentacaoDAO.existeMovimentoPorConta(idConta);		
 		return cont;
 	}
 
 
-	
-	
-	
-	
-	
-	public String getMensagem() {
-		return mensagem;
-	}
+
 
 
 
