@@ -10,11 +10,39 @@ import br.com.meuBanco.entity.dto.TbMovimentacaoDTO;
 
 public interface ITbMovimentacaoService {
 	
-    void addTbMovimentacaoDTO(TbMovimentacaoDTO tbMovimentacaoDTO)  throws Exception, Throwable ;	
-    List<TbMovimentacaoDTO> consultar()  throws Exception, Throwable ;
-    TbMovimentacaoDTO getTbMovimentacaoByConta(int id)  throws Exception, Throwable ;
-    TbMovimentacaoDTO getTbMovimentacaoById(int id)  throws Exception, Throwable ;
+	/**
+	 * GRAVA MOVIMENTAÇÃO POR CONTA
+	 * @param tbMovimentacaoDTO
+	 * @throws Exception
+	 * @throws Throwable
+	 */
+    void addTbMovimentacaoDTO(TbMovimentacaoDTO tbMovimentacaoDTO)  throws Exception, Throwable ;    
+    
+    /**
+     * BUSCA O SALDO DA CONTA
+     * @param idConta
+     * @return
+     * @throws Exception
+     * @throws Throwable
+     */
+    TbMovimentacaoDTO getTbMovimentacaoByConta(int idConta)  throws Exception, Throwable;
+    
+    /**
+     * VERIFICA SE EXISTE MOVIMENTO POR CONTA
+     * @param idConta
+     * @return
+     * @throws Exception
+     * @throws Throwable
+     */
     boolean existeMovimentoPorConta(int idConta)  throws Exception, Throwable;
-    void deleteTbMovimentacao(int id)  throws Exception, Throwable ;
+    
+    /**
+     * 
+     * @param idConta
+     * @return
+     * @throws Exception
+     * @throws Throwable
+     */
+    List<TbMovimentacaoDTO> consultar(int idConta)  throws Exception, Throwable ;
 
 }
