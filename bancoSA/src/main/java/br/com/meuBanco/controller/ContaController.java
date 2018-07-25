@@ -41,8 +41,6 @@ public class ContaController {
 	@RequestMapping(value="/conta", method = RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody ResponseModel salvar(@RequestBody TbContaDTO tbContaDTO)  throws Exception, Throwable { 
       
-	System.out.println("-------------------------------------------------------------------"+tbContaDTO.getIdConta()+" "+tbContaDTO.getContaNumero()+" "+tbContaDTO.getContaDigito()+" "+tbContaDTO.getContaTipo()+" "+tbContaDTO.getContaIdAgencia()+" "+tbContaDTO.getContaIdCliente());
-	
 		try {			 
 			this.contaService.addTbContaDTO(tbContaDTO); 
 			return new ResponseModel(1,"Registro salvo com sucesso!"); 
@@ -64,8 +62,6 @@ public class ContaController {
 	 */
 	@RequestMapping(value="/conta", method = RequestMethod.PUT, consumes=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody ResponseModel atualizar(@RequestBody TbContaDTO tbContaDTO)  throws Exception, Throwable {
-
-		System.out.println("-------------------------------------------------------------------"+tbContaDTO.getIdConta()+" "+tbContaDTO.getContaNumero()+" "+tbContaDTO.getContaDigito()+" "+tbContaDTO.getContaTipo()+" "+tbContaDTO.getContaIdAgencia()+" "+tbContaDTO.getContaIdCliente());
 
 		
 		try {			 
@@ -107,7 +103,24 @@ public class ContaController {
 		
 	}
 	
-	 
+	/**
+	 * 
+	 * @param idConta
+	 * @return
+	 * @throws Exception
+	 * @throws Throwable
+	 */
+	@RequestMapping(value="/contaCliente/{contaIdCliente}", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public @ResponseBody TbContaDTO buscarPorCliente(@PathVariable("contaIdCliente") String contaIdCliente)  throws Exception, Throwable { 
+		
+		int id = Integer.parseInt(contaIdCliente);
+		return this.contaService.getTbContaByCliente(id);
+		
+	}
+
+	
+	
+	
 	 
 	/**
 	 * 

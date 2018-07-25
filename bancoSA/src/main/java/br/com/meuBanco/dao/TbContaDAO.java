@@ -35,16 +35,14 @@ public class TbContaDAO implements ItbContaDAO {
 		sql.append( "  id_conta, ");
 		sql.append( "  tb_conta_digito, ");
 		sql.append( "  tb_conta_numero, ");
-		sql.append( "  tb_conta_tipo, ");
 		sql.append( "  tb_agencia_id_agencia, ");
 		sql.append( "  tb_cliente_id_cliente) ");
-		sql.append( "  values (:idConta, :tbContaDigito, :tbContaNumero, :tbContaTipo, :tbAgencia, :tbCliente)");
+		sql.append( "  values (:idConta, :tbContaDigito, :tbContaNumero, :tbAgencia, :tbCliente)");
 		
 		SqlParameterSource params = new MapSqlParameterSource()
 				.addValue("idConta", tbContaDTO.getIdConta())
 				.addValue("tbContaDigito", tbContaDTO.getContaDigito())
 				.addValue("tbContaNumero", tbContaDTO.getContaNumero())
-				.addValue("tbContaTipo", tbContaDTO.getContaTipo())
 				.addValue("tbAgencia", tbContaDTO.getContaIdAgencia())
 				.addValue("tbCliente", tbContaDTO.getContaIdCliente());
 		
@@ -67,7 +65,6 @@ public class TbContaDAO implements ItbContaDAO {
 		sql.append(" SET  ");
 		sql.append(" tb_conta_digito = :tbContaDigito, ");
 		sql.append(" tb_conta_numero = :tbContaNumero, ");
-		sql.append(" tb_conta_tipo = :tbContaTipo, ");
 		sql.append(" tb_agencia_id_agencia = :tbAgencia, ");
 		sql.append(" tb_cliente_id_cliente = :tbCliente ");
 		sql.append(" WHERE id_conta = :idConta");
@@ -76,7 +73,6 @@ public class TbContaDAO implements ItbContaDAO {
 				.addValue("idConta", tbContaDTO.getIdConta())
 				.addValue("tbContaDigito", tbContaDTO.getContaDigito())
 				.addValue("tbContaNumero", tbContaDTO.getContaNumero())
-				.addValue("tbContaTipo", tbContaDTO.getContaTipo())
 				.addValue("tbAgencia", tbContaDTO.getContaIdAgencia())
 				.addValue("tbCliente", tbContaDTO.getContaIdCliente());
 		
@@ -97,13 +93,12 @@ public class TbContaDAO implements ItbContaDAO {
 			.append("  c.id_conta")
 			.append("  ,c.tb_conta_digito")
 			.append("  ,c.tb_conta_numero")
-			.append("  ,c.tb_conta_tipo")
 			.append("  ,i.id_agencia")
 			.append("  ,i.tb_agencia_codigo")
 			.append("  ,i.tb_agencia_digito")
 			.append("  ,a.id_cliente")
 			.append("  ,a.tb_cliente_nome")
-			.append("  ,a.tb_cliente_senha")
+
 			.append("  FROM tb_conta c INNER JOIN tb_agencia i ON i.id_agencia = c.tb_agencia_id_agencia  ")
 	        .append("                  INNER JOIN tb_cliente a ON a.id_cliente = c.tb_cliente_id_cliente  ");
 		
@@ -115,13 +110,12 @@ public class TbContaDAO implements ItbContaDAO {
 			tbContaDTO.setIdConta(rs.getInt("c.id_conta"));
 			tbContaDTO.setContaDigito(rs.getInt("c.tb_conta_digito"));
 			tbContaDTO.setContaNumero(rs.getInt("c.tb_conta_numero"));
-			tbContaDTO.setContaTipo(rs.getInt("c.tb_conta_tipo"));
 			tbContaDTO.setContaIdAgencia(rs.getInt("i.id_agencia"));
 			tbContaDTO.setAgenciaCodigo(rs.getInt("i.tb_agencia_codigo"));
 			tbContaDTO.setAgenciaDigito(rs.getString("i.tb_agencia_digito"));
 			tbContaDTO.setContaIdCliente(rs.getInt("a.id_cliente"));
 			tbContaDTO.setClienteNome(rs.getString("a.tb_cliente_nome"));
-			tbContaDTO.setClienteSenha(rs.getInt("a.tb_cliente_senha"));
+
 	
 	return tbContaDTO;
 	 
@@ -145,20 +139,16 @@ public class TbContaDAO implements ItbContaDAO {
 		return jdbcTemplate.queryForObject(sql.toString(), params, (rs, i) -> {
 						
 			TbContaDTO tbContaDTO = new TbContaDTO();
-
 			tbContaDTO.setIdConta(rs.getInt("c.id_conta"));
 			tbContaDTO.setContaDigito(rs.getInt("c.tb_conta_digito"));
 			tbContaDTO.setContaNumero(rs.getInt("c.tb_conta_numero"));
-			tbContaDTO.setContaTipo(rs.getInt("c.tb_conta_tipo"));
 			tbContaDTO.setContaIdAgencia(rs.getInt("i.id_agencia"));
 			tbContaDTO.setAgenciaCodigo(rs.getInt("i.tb_agencia_codigo"));
 			tbContaDTO.setAgenciaDigito(rs.getString("i.tb_agencia_digito"));
 			tbContaDTO.setContaIdCliente(rs.getInt("a.id_cliente"));
 			tbContaDTO.setClienteNome(rs.getString("a.tb_cliente_nome"));
-			tbContaDTO.setClienteSenha(rs.getInt("a.tb_cliente_senha"));
 						
 			return tbContaDTO;
-
 		});
 	}
 		
@@ -166,15 +156,21 @@ public class TbContaDAO implements ItbContaDAO {
 	public TbContaDTO getTbContaById(int id)  throws Exception, Throwable {
 		
 		StringBuilder sql = new StringBuilder(sqlSelectPrincipal);		
-		sql.append("  WHERE c.id_conta = :idConta ");
-		
-		SqlParameterSource params = new MapSqlParameterSource().addValue("idConta", id);
-		
-		return devolveObjeto(sql, params);
-		
+		sql.append("  WHERE c.id_conta = :idConta ");		
+		SqlParameterSource params = new MapSqlParameterSource().addValue("idConta", id);		
+		return devolveObjeto(sql, params);		
 	}
 	
-	 
+
+	public TbContaDTO getTbContaByCliente(int id)  throws Exception, Throwable {
+		
+		StringBuilder sql = new StringBuilder(sqlSelectPrincipal);		
+		sql.append("  WHERE a.id_cliente = :contaIdCliente ");		
+		SqlParameterSource params = new MapSqlParameterSource().addValue("contaIdCliente", id);		
+		return devolveObjeto(sql, params);		
+	}
+	
+
 
 
 

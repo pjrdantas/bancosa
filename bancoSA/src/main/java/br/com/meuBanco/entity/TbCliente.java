@@ -21,8 +21,7 @@ public class TbCliente {
 	@Column(name="tb_cliente_nome", nullable=false, length=45)
 	private String tbClienteNome;
 
-	@Column(name="tb_cliente_senha", nullable=false)
-	private int tbClienteSenha;
+	
 
 	//bi-directional many-to-one association to TbAgencia
 	@ManyToOne
@@ -52,13 +51,6 @@ public class TbCliente {
 		this.tbClienteNome = tbClienteNome;
 	}
 
-	public int getTbClienteSenha() {
-		return this.tbClienteSenha;
-	}
-
-	public void setTbClienteSenha(int tbClienteSenha) {
-		this.tbClienteSenha = tbClienteSenha;
-	}
 
 	public TbAgencia getTbAgencia() {
 		return this.tbAgencia;

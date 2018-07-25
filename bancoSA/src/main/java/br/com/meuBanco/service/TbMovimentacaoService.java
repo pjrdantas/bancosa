@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.meuBanco.dao.impl.ItbMovimentacaoDAO;
+import br.com.meuBanco.entity.dto.ExtratoDTO;
 import br.com.meuBanco.entity.dto.TbMovimentacaoDTO;
 import br.com.meuBanco.service.impl.ITbMovimentacaoService;
 
@@ -17,6 +18,7 @@ public class TbMovimentacaoService  implements ITbMovimentacaoService {
 	
 	@Autowired
 	private ItbMovimentacaoDAO tbMovimentacaoDAO;
+
 	private TbMovimentacaoDTO obj;
 	private boolean cont;	
 	
@@ -32,7 +34,7 @@ public class TbMovimentacaoService  implements ITbMovimentacaoService {
 	 * LISTA MOVIMENTAÇÃO POR CONTA (EXTRATO POR CONTA)
 	 */
 	@Override
-	public List<TbMovimentacaoDTO> consultar(int idConta)  throws Exception, Throwable {
+	public List<ExtratoDTO> consultar(int idConta)  throws Exception, Throwable {
 		return tbMovimentacaoDAO.getAllTbMovimentacaos(idConta);
 	}
 

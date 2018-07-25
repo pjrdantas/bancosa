@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.meuBanco.dao.impl.ItbMovimentacaoDAO;
+import br.com.meuBanco.entity.dto.ExtratoDTO;
 import br.com.meuBanco.entity.dto.TbMovimentacaoDTO;
 import br.com.meuBanco.response.ResponseModel;
 import br.com.meuBanco.service.impl.ITbMovimentacaoService;
@@ -31,9 +32,10 @@ public class MovimentacaoController {
 
 	boolean cont;
 	TbMovimentacaoDTO obj;
-	BigDecimal[] resultado;
+	int resultado;
 	int codigo;
 	String mensagem;
+	String mensagemNota = "";
 
 	/**
 	 * GRAVA MOVIMENTAÇÃO POR CONTA
@@ -46,14 +48,14 @@ public class MovimentacaoController {
 	@RequestMapping(value = "/movimentacao", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody ResponseModel salvar(@RequestBody TbMovimentacaoDTO tbMovimentacaoDTO)
 			throws Exception, Throwable {
-
+		
 		try {
 			codigo = 1;
 			mensagem = null;
 			// VERIFICA EXISTENCIA DE MOVIMENTO NA CONTA
 			existeMovimentoPorConta(tbMovimentacaoDTO.getMovimentacaoIdConta());
-			// EXISTE MOVIMENTO
-			if (cont) {
+			// EXISTE MOVIMENTO	
+			if (cont == true) {
 				getTbMovimentacaoByConta(tbMovimentacaoDTO.getMovimentacaoIdConta());
 				// É UMA MOVIMENTAÇÃO DE CREDITO
 				if (tbMovimentacaoDTO.getMovimentacaoDebito() == null) {
@@ -68,29 +70,36 @@ public class MovimentacaoController {
 					if (mensagem == null) {
 						// VERFICA SE DEBITO É MULTIPLO DE 10
 						debitoMultiploDeDez(tbMovimentacaoDTO.getMovimentacaoDebito());
+						
 						// VALOR DO DEBITO NÃO É MULTIPLO DE 10
-						if (!resultado[1].equals(BigDecimal.ZERO)) {
+						if (resultado > 0) {
 							mensagem = "VALOR NÃO É POSSIVEL PARA SAQUE";
 							// VALOR DO DEBITO É MULTIPLO DE 10
 						} else {
 							tbMovimentacaoDTO.setMovimentacaoSaldo(
 									obj.getMovimentacaoSaldo().subtract(tbMovimentacaoDTO.getMovimentacaoDebito()));
+							contaNotas(tbMovimentacaoDTO.getMovimentacaoDebito());
 						}
 					}
 				}
 				// NÃO EXISTE MOVIMENTO
-			} else {
+			} else if (cont == false) {
 				if (tbMovimentacaoDTO.getMovimentacaoDebito() == null) {
 					tbMovimentacaoDTO.setMovimentacaoSaldo(
-							tbMovimentacaoDTO.getMovimentacaoCredito().add(obj.getMovimentacaoSaldo()));
+							tbMovimentacaoDTO.getMovimentacaoCredito());
 					mensagem = null;
+					
 					// É UMA MOVIMENTAÇÃO DE DEBITO
 				} else {
-					mensagem = "-----SALDO INSUFICIENTE PARA SAQUE";
+					mensagem = "SALDO INSUFICIENTE PARA SAQUE";
 				}
 			}
 			if (mensagem == null) {
-				mensagem = "saldo salvo com sucesso!";
+				mensagem = "Operação realizada com sucesso! ";
+				if (!mensagemNota.equals("")) {					
+					mensagem = mensagem + mensagemNota;
+					mensagemNota = "";
+				} 
 				this.movimentacaoService.addTbMovimentacaoDTO(tbMovimentacaoDTO);
 			}
 			obj = null;
@@ -118,6 +127,112 @@ public class MovimentacaoController {
 			mensagem = "-----SALDO INSUFICIENTE PARA SAQUE";
 		}
 		return mensagem;
+		
+		
+	}
+	
+	/**
+	 * 
+	 * @param debito
+	 * @return
+	 * @throws Exception
+	 * @throws Throwable
+	 */
+	public String contaNotas(BigDecimal debito) throws Exception, Throwable {
+		mensagemNota = "";
+		boolean ok = true;
+		BigDecimal valor100 = new BigDecimal("100");
+		BigDecimal valor50 = new BigDecimal("50");
+		BigDecimal valor20 = new BigDecimal("20");
+		BigDecimal valor10 = new BigDecimal("10");
+		
+        int c100 = 0;
+        int c50 = 0;
+        int c20 = 0;
+        int c10 = 0;
+		while (ok) {
+
+			if (valor100.compareTo(debito) != 1) {
+				debito = debito.subtract(valor100);
+				c100++;
+			} else {
+				if (valor50.compareTo(debito) != 1) {
+					debito = debito.subtract(valor50);
+					c50++;
+				} else {
+					if (valor20.compareTo(debito) != 1) {
+						debito = debito.subtract(valor20);
+						c20++;
+					} else {
+						if (valor10.compareTo(debito) != 1) {
+							debito = debito.subtract(valor10);
+							c10++;
+						} else {
+							ok = false;
+						}
+					}
+				}
+			}
+		}
+		if (c100 > 0) {
+			if (c100 > 1) {
+				
+				mensagemNota = mensagemNota + "Entregar " + c100 +" notas de R$100,00";
+			} else {				
+				mensagemNota = mensagemNota + "Entregar " + c100 +" nota  de R$100,00";
+			}			
+		}
+		if (c50 > 0) {
+			if (c50 > 1) {
+				if (mensagemNota != "") {
+					mensagemNota = mensagemNota + ", " + c50+" notas de R$50,00";
+				} else {
+					mensagemNota = mensagemNota + "Entregar " + c50+" notas de R$50,00";
+				}				
+			} else {
+				if (mensagemNota != "") {
+					mensagemNota = mensagemNota + ", " + c50+" nota de R$50,00";
+				} else {
+					mensagemNota = mensagemNota + "Entregar " + c50+" nota de R$50,00";
+				}
+				
+			}			
+		}
+		if (c20 > 0) {
+			if (c20 > 1) {
+				if (mensagemNota != "") {
+					mensagemNota = mensagemNota + ", " + c20+" notas de R$20,00";
+				} else {
+					mensagemNota = mensagemNota + "Entregar " + c20+" notas de R$20,00";
+				}				
+			} else {
+				if (mensagemNota != "") {
+					mensagemNota = mensagemNota + ", " + c20+" nota de R$20,00";
+				} else {
+					mensagemNota = mensagemNota + "Entregar " + c20+" nota de R$20,00";
+				}				
+			}			
+		}
+		if (c10 > 0) {
+			if (c10 > 1) {
+				if (mensagemNota != "") {
+					mensagemNota = mensagemNota + ", " + c10+" notas de R$10,00";
+				} else {
+					mensagemNota = mensagemNota + "Entregar " + c10+" notas de R$10,00";
+				}				
+			}else {
+				if (mensagemNota != "") {
+					mensagemNota = mensagemNota + ", " + c10+" nota de R$10,00";
+				} else {
+					mensagemNota = mensagemNota + "Entregar " + c10+" nota de R$10,00";
+				}				
+			}			
+		}
+		
+
+			
+		 
+		return mensagemNota;
 	}
 
 	/**
@@ -128,7 +243,7 @@ public class MovimentacaoController {
 	 * @throws Throwable
 	 */
 	@RequestMapping(value = "/movimentacao/{idConta}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody List<TbMovimentacaoDTO> consultar(@PathVariable("idConta") String idConta)
+	public @ResponseBody List<ExtratoDTO> consultar(@PathVariable("idConta") String idConta)
 			throws Exception, Throwable {
 		int id = Integer.parseInt(idConta);
 		return this.movimentacaoService.consultar(id);
@@ -142,9 +257,11 @@ public class MovimentacaoController {
 	 * @throws Exception
 	 * @throws Throwable
 	 */
-	public BigDecimal[] debitoMultiploDeDez(BigDecimal debito) throws Exception, Throwable {
-		BigDecimal dez = new BigDecimal("10.0");
-		resultado = debito.divideAndRemainder(dez);
+	public int debitoMultiploDeDez(BigDecimal debito) throws Exception, Throwable {
+		int entrada = Integer.valueOf(debito.toString());
+		int divisor =10;
+
+		resultado = (entrada % divisor);
 
 		return resultado;
 	}

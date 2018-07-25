@@ -24,8 +24,7 @@ public class TbConta {
 	@Column(name="tb_conta_numero", nullable=false)
 	private int tbContaNumero;
 
-	@Column(name="tb_conta_tipo", nullable=false)
-	private int tbContaTipo;
+	
 
 	//bi-directional many-to-one association to TbAgencia
 	@ManyToOne
@@ -66,14 +65,6 @@ public class TbConta {
 
 	public void setTbContaNumero(int tbContaNumero) {
 		this.tbContaNumero = tbContaNumero;
-	}
-
-	public int getTbContaTipo() {
-		return this.tbContaTipo;
-	}
-
-	public void setTbContaTipo(int tbContaTipo) {
-		this.tbContaTipo = tbContaTipo;
 	}
 
 	public TbAgencia getTbAgencia() {

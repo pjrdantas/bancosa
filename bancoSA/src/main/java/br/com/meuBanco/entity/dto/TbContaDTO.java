@@ -6,7 +6,6 @@ public class TbContaDTO {
 	private int idConta;	
 	private int contaDigito;	
 	private int contaNumero;
-	private int contaTipo;
 	private int contaIdAgencia;
 	private int agenciaCodigo;
 	private String agenciaDigito;
@@ -41,13 +40,6 @@ public class TbContaDTO {
 		this.contaNumero = contaNumero;
 	}
 
-	public int getContaTipo() {
-		return contaTipo;
-	}
-
-	public void setContaTipo(int contaTipo) {
-		this.contaTipo = contaTipo;
-	}
 
 	public int getContaIdAgencia() {
 		return contaIdAgencia;

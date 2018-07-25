@@ -50,7 +50,11 @@ public class TbContaService  implements ITbContaService {
 		return obj;
 	}	
 	
-	 
+	@Override
+	public TbContaDTO getTbContaByCliente(int id)  throws Exception, Throwable {
+		TbContaDTO obj = tbContaDAO.getTbContaByCliente(id);
+		return obj;
+	}
 	
 	@Override
 	public void deleteTbConta(int id)  throws Exception, Throwable {

@@ -2,6 +2,7 @@ package br.com.meuBanco.service.impl;
 
 import java.util.List;
 
+import br.com.meuBanco.entity.dto.ExtratoDTO;
 import br.com.meuBanco.entity.dto.TbMovimentacaoDTO;
 
 
@@ -43,6 +44,6 @@ public interface ITbMovimentacaoService {
      * @throws Exception
      * @throws Throwable
      */
-    List<TbMovimentacaoDTO> consultar(int idConta)  throws Exception, Throwable ;
+    List<ExtratoDTO> consultar(int idConta)  throws Exception, Throwable ;
 
 }

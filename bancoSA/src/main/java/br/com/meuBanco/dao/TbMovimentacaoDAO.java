@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.meuBanco.dao.impl.ItbMovimentacaoDAO;
+import br.com.meuBanco.entity.dto.ExtratoDTO;
 import br.com.meuBanco.entity.dto.TbMovimentacaoDTO;
 
 
@@ -34,7 +35,7 @@ public class TbMovimentacaoDAO implements ItbMovimentacaoDAO {
 	@Override
 	public void addTbMovimentacaoDTO(TbMovimentacaoDTO tbMovimentacaoDTO)  throws Exception, Throwable  {
 	
-		System.out.println("-----------------entrei aqui");
+		
 		
 		StringBuilder sql = new StringBuilder();
 		sql.append(	"  INSERT INTO ");
@@ -93,23 +94,27 @@ public class TbMovimentacaoDAO implements ItbMovimentacaoDAO {
 	 * @throws Exception
 	 * @throws Throwable
 	 */
-	private List<TbMovimentacaoDTO> devolveListaObjetos(StringBuilder sql, SqlParameterSource params)  throws Exception, Throwable  {
+	private List<ExtratoDTO> devolveListaObjetos(StringBuilder sql, SqlParameterSource params)  throws Exception, Throwable  {
 		return jdbcTemplate.query(sql.toString(), params, (rs, i) -> {
 		
-			TbMovimentacaoDTO tbMovimentacaoDTO = new TbMovimentacaoDTO();
+			ExtratoDTO extratoDTO = new ExtratoDTO();
 
-			tbMovimentacaoDTO.setIdMovimentacao(rs.getInt("c.id_movimentacao"));
-			tbMovimentacaoDTO.setMovimentacaoCredito(rs.getBigDecimal("c.tb_movimentacao_credito"));
+			extratoDTO.setIdMovimentacao(rs.getInt("c.id_movimentacao"));
+			if (rs.getBigDecimal("c.tb_movimentacao_credito") != null) {
+				extratoDTO.setMovimentacaoCredito("R$ "+(rs.getBigDecimal("c.tb_movimentacao_credito")).toString().replace(".", ","));
+			}			
 			data = rs.getTimestamp("c.tb_movimentacao_data");
 			formato = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-			tbMovimentacaoDTO.setMovimentacaoData(formato.format(data));
-			tbMovimentacaoDTO.setMovimentacaoDebito(rs.getBigDecimal("c.tb_movimentacao_debito"));
-			tbMovimentacaoDTO.setMovimentacaoSaldo(rs.getBigDecimal("c.tb_movimentacao_saldo"));
-			tbMovimentacaoDTO.setMovimentacaoIdConta(rs.getInt("i.id_conta"));
-			tbMovimentacaoDTO.setContaDigito(rs.getString("i.tb_conta_digito"));
-			tbMovimentacaoDTO.setContaNumero(rs.getInt("i.tb_conta_numero"));
+			extratoDTO.setMovimentacaoData(formato.format(data));
+			if (rs.getBigDecimal("c.tb_movimentacao_debito") != null) {
+				extratoDTO.setMovimentacaoDebito("R$ "+(rs.getBigDecimal("c.tb_movimentacao_debito")).toString().replace(".", ","));
+			}
+			extratoDTO.setMovimentacaoSaldo("R$ "+(rs.getBigDecimal("c.tb_movimentacao_saldo")).toString().replace(".", ","));
+			extratoDTO.setMovimentacaoIdConta(rs.getInt("i.id_conta"));
+			extratoDTO.setContaDigito(rs.getString("i.tb_conta_digito"));
+			extratoDTO.setContaNumero(rs.getInt("i.tb_conta_numero"));
 	
-			return tbMovimentacaoDTO;	 
+			return extratoDTO;	 
 		});
 	}
 	
@@ -117,7 +122,7 @@ public class TbMovimentacaoDAO implements ItbMovimentacaoDAO {
 	 * LISTA MOVIMENTAÇÃO POR CONTA (EXTRATO POR CONTA)
 	 */
 	@Override
-	public List<TbMovimentacaoDTO> getAllTbMovimentacaos(int idConta)  throws Exception, Throwable  {
+	public List<ExtratoDTO> getAllTbMovimentacaos(int idConta)  throws Exception, Throwable  {
 		
 		StringBuilder sql = new StringBuilder(sqlSelectPrincipal)		
 		.append(" INNER JOIN tb_conta i ON i.id_conta = c.tb_conta_id_conta ") 

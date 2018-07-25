@@ -35,14 +35,12 @@ public class TbClienteDAO implements ItbClienteDAO {
 		sql.append( "  tb_cliente (");
 		sql.append( "  id_cliente, ");
 		sql.append( "  tb_cliente_nome, ");
-		sql.append( "  tb_cliente_senha, ");
 		sql.append( "  tb_agencia_id_agencia) ");
-		sql.append( "  values (:idCliente, :tbClienteNome, :tbClienteSenha, :tbAgencia)");
+		sql.append( "  values (:idCliente, :tbClienteNome, :tbAgencia)");
 		
 		SqlParameterSource params = new MapSqlParameterSource()
 				.addValue("idCliente", tbClienteDTO.getIdCliente())
 				.addValue("tbClienteNome", tbClienteDTO.getClienteNome())
-				.addValue("tbClienteSenha", tbClienteDTO.getClienteSenha())
 				.addValue("tbAgencia", tbClienteDTO.getClienteIAgencia());
 		
 		jdbcTemplate.update(sql.toString(), params);
@@ -59,14 +57,12 @@ public class TbClienteDAO implements ItbClienteDAO {
 		sql.append(" UPDATE tb_cliente ");
 		sql.append(" SET  ");
 		sql.append(" tb_cliente_nome = :tbClienteNome, ");
-		sql.append(" tb_cliente_senha = :tbClienteSenha, ");
 		sql.append(" tb_agencia_id_agencia = :tbAgencia ");
 		sql.append(" WHERE id_cliente = :idCliente");
 		
 		SqlParameterSource params = new MapSqlParameterSource()
 				
 				.addValue("tbClienteNome", tbClienteDTO.getClienteNome())
-				.addValue("tbClienteSenha", tbClienteDTO.getClienteSenha())
 				.addValue("tbAgencia", tbClienteDTO.getClienteIAgencia())
 				.addValue("idCliente", tbClienteDTO.getIdCliente());
 		
@@ -85,7 +81,6 @@ public class TbClienteDAO implements ItbClienteDAO {
 			"  SELECT DISTINCT ")
 			.append("  c.id_cliente")
 			.append("  ,c.tb_cliente_nome")
-			.append("  ,c.tb_cliente_senha")
 			.append("  ,i.id_agencia")
 			.append("  ,i.tb_agencia_codigo")
 			.append("  ,i.tb_agencia_digito")
@@ -99,7 +94,6 @@ public class TbClienteDAO implements ItbClienteDAO {
 
 			tbClienteDTO.setIdCliente(rs.getInt("c.id_cliente"));
 			tbClienteDTO.setClienteNome(rs.getString("c.tb_cliente_nome"));
-			tbClienteDTO.setClienteSenha(rs.getInt("c.tb_cliente_senha"));
 			tbClienteDTO.setClienteIAgencia(rs.getInt("i.id_agencia"));
 			tbClienteDTO.setAgenciaCodigo(rs.getInt("i.tb_agencia_codigo"));
 			tbClienteDTO.setAgenciaDigito(rs.getString("i.tb_agencia_digito"));
@@ -129,7 +123,6 @@ public class TbClienteDAO implements ItbClienteDAO {
 
 			tbClienteDTO.setIdCliente(rs.getInt("c.id_cliente"));
 			tbClienteDTO.setClienteNome(rs.getString("c.tb_cliente_nome"));
-			tbClienteDTO.setClienteSenha(rs.getInt("c.tb_cliente_senha"));
 			tbClienteDTO.setClienteIAgencia(rs.getInt("i.id_agencia"));
 			tbClienteDTO.setAgenciaCodigo(rs.getInt("i.tb_agencia_codigo"));
 			tbClienteDTO.setAgenciaDigito(rs.getString("i.tb_agencia_digito"));
@@ -151,9 +144,6 @@ public class TbClienteDAO implements ItbClienteDAO {
 		
 	}
 	
-	 
-
-
 
 	@Override
 	public void deleteTbCliente(int id)   throws Exception, Throwable {

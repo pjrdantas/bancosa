@@ -147,7 +147,6 @@ public class TbAgenciaDAO implements ItbAgenciaDAO {
 		sql.append(" WHERE c.id_agencia = :idAgencia ");
 		SqlParameterSource params = new MapSqlParameterSource().addValue("idAgencia", id);
 		
-		System.out.println("-----------------RETORNO AGENCIA-------------------------------" + params);
 		return devolveObjeto(sql, params);
 		
 	}

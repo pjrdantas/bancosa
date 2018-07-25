@@ -3,6 +3,7 @@ package br.com.meuBanco.dao.impl;
 
 import java.util.List;
 
+import br.com.meuBanco.entity.dto.ExtratoDTO;
 import br.com.meuBanco.entity.dto.TbMovimentacaoDTO;
 
 
@@ -24,7 +25,7 @@ public interface ItbMovimentacaoDAO {
      * @throws Exception
      * @throws Throwable
      */
-    List<TbMovimentacaoDTO> getAllTbMovimentacaos(int idConta)  throws Exception, Throwable ;
+    List<ExtratoDTO> getAllTbMovimentacaos(int idConta)  throws Exception, Throwable ;
     
     
     /**

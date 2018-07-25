@@ -12,9 +12,6 @@ import br.com.meuBanco.service.impl.ITbClienteService;
 
 
 
-
-
-
 @Service
 public class TbClienteService  implements ITbClienteService {
 	
@@ -29,7 +26,6 @@ public class TbClienteService  implements ITbClienteService {
 		
 	}
 	
-
 	 
 	@Override
 	public void updateTbClienteDTO(TbClienteDTO tbClienteDTO)   throws Exception, Throwable {
@@ -42,15 +38,14 @@ public class TbClienteService  implements ITbClienteService {
 		return tbClienteDAO.getAllTbClientes();
 	}
 
-	
-	
+		
 	@Override
 	public TbClienteDTO getTbClienteById(int id)  throws Exception, Throwable  {
 		TbClienteDTO obj = tbClienteDAO.getTbClienteById(id);
 		return obj;
 	}	
 	
-	 
+
 	
 	@Override
 	public void deleteTbCliente(int id)  throws Exception, Throwable  {

@@ -39,7 +39,7 @@ public class ClienteController {
 	@RequestMapping(value="/cliente", method = RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody ResponseModel salvar(@RequestBody TbClienteDTO tbClienteDTO)  throws Exception, Throwable {
       
-	System.out.println("------------------------INCLUIR-----------------------------"+tbClienteDTO.getIdCliente()+" "+tbClienteDTO.getClienteNome()+" "+tbClienteDTO.getClienteSenha());
+
 	
 		try {			 
 			this.clienteService.addTbClienteDTO(tbClienteDTO); 
@@ -63,7 +63,6 @@ public class ClienteController {
 	@RequestMapping(value="/cliente", method = RequestMethod.PUT, consumes=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody ResponseModel atualizar(@RequestBody TbClienteDTO tbClienteDTO)  throws Exception, Throwable {
 
-		System.out.println("-------------------------ATUALIZAR-------------------------"+tbClienteDTO.getIdCliente()+" "+tbClienteDTO.getClienteNome()+" "+tbClienteDTO.getClienteSenha());
 
 		
 		try {			 
@@ -98,13 +97,13 @@ public class ClienteController {
 	@RequestMapping(value="/cliente/{idCliente}", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody TbClienteDTO buscar(@PathVariable("idCliente") String idCliente)  throws Exception, Throwable {
 		
-		System.out.println("------------------------CONSULTA POR ID -----------------------------"+idCliente);
 		
 		int id = Integer.parseInt(idCliente);
 		return this.clienteService.getTbClienteById(id);
 		
 	}
 	
+
 	 
 	 
 	/**
@@ -115,7 +114,7 @@ public class ClienteController {
 	@RequestMapping(value="/cliente/{idCliente}", method = RequestMethod.DELETE, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody ResponseModel excluir(@PathVariable("idCliente") String idCliente)  throws Exception, Throwable {
 
-		System.out.println("------------------------EXCLUIR-----------------------------"+idCliente);
+
 
 		int id = Integer.parseInt(idCliente);
 		 
